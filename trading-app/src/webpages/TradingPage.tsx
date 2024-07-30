@@ -5,7 +5,7 @@ import { get } from "http";
 interface TradingComponent {
   name: string;
 }
-//
+
 interface Stock {
   name: string;
   stockID: number;
