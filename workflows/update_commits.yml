@@ -1,0 +1,44 @@
+name: Update Notion with Commits
+
+on:
+  push:
+    branches:
+      - main  # Change to your branch name
+
+jobs:
+  update-notion:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Get Recent Commits
+      id: commits
+      run: |
+        commits=$(git log -n 5 --pretty=format:"%H|%s|%an|%ad|%ar")
+        echo "::set-output name=commits::$commits"
+
+    - name: Update Notion
+      env:
+        NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        NOTION_DATABASE_ID: your-database-id
+      run: |
+        commits=${{ steps.commits.outputs.commits }}
+        IFS=$'\n'
+        for commit in $commits; do
+          IFS='|' read -r hash message author date relative <<< "$commit"
+          curl -X POST 'https://api.notion.com/v1/pages' \
+            -H "Authorization: Bearer $NOTION_TOKEN" \
+            -H "Content-Type: application/json" \
+            -H "Notion-Version: 2021-05-13" \
+            --data '{
+              "parent": { "database_id": "'$NOTION_DATABASE_ID'" },
+              "properties": {
+                "Commit Message": { "title": [{ "text": { "content": "'$message'" } }] },
+                "Author": { "rich_text": [{ "text": { "content": "'$author'" } }] },
+                "Time": { "date": { "start": "'$date'" } },
+                "URL": { "url": "https://github.com/your-repo/commit/'$hash'" }
+              }
+            }'
+        done
