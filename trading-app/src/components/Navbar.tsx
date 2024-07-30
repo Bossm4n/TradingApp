@@ -1,16 +1,17 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const Navbar: React.FC = () => {
   return (
     <nav>
       <ul>
-          <Link to="/">Home</Link>
-          <Link to="/login">Login</Link>
-          <Link to="/trading">Trading</Link>
+        <Link to="/">Home</Link>
+        <Link to="/login">Login</Link>
+        <Link to="/trading">Trading</Link>
+        <Link to="/search">Search</Link>
       </ul>
     </nav>
   );
-}
+};
 
 export default Navbar;
