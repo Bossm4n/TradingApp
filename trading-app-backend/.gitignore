@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ### Database Stuff ###
-src/main/resources/application.properties
+#.env
