@@ -1,5 +1,7 @@
 package com.assadosman.Trading.App.model;
 
+import com.assadosman.Trading.App.model.user.User;
+
 import java.util.Collection;
 
 public class App {

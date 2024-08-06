@@ -1,37 +1,64 @@
-package com.assadosman.Trading.App.model;
+package com.assadosman.Trading.App.model.user;
 
+import java.time.LocalDate;
+
+//@Table
+//@Entity
 public class User {
-    private String name;
-    private final int UserID;
+
+    private int userID;
+    private String firstName;
+    private String lastName;
     private String email;
     private String hashedPassword;
-    private String DOB;
+    private LocalDate DOB;
 
-    public User(String name, String email, String password, String DOB, int UserID) {
-        this.name = name;
+    public User() {
+    }
+
+    public User(String firstName,String lastName, String email, String password, LocalDate DOB, int userID) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.hashedPassword = hashingFunction(password);
         this.DOB = DOB;
-        this.UserID = UserID;
+        this.userID = userID;
+    }
+
+    public User(String firstName, String lastName, String email, LocalDate DOB, String hashedPassword ) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.hashedPassword = hashedPassword;
+        this.DOB = DOB;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     public String getName(){
-        return name;
+        return firstName + " " + lastName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public String getDOB() {
+    public LocalDate getDOB() {
         return DOB;
     }
 
-    public void setDOB(String DOB) {
+    public void setDOB(LocalDate DOB) {
         this.DOB = DOB;
     }
 
@@ -45,7 +72,7 @@ public class User {
     }
 
     public int getUserID() {
-        return UserID;
+        return userID;
     }
 
     private boolean testPassword(String inputtedPassword){
