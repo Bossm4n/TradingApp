@@ -1,22 +1,31 @@
 package com.assadosman.Trading.App.model.user;
 
+import jakarta.persistence.*;
+import lombok.Data;
+
 import java.time.LocalDate;
 
-//@Table
-//@Entity
+
+@Entity
+@Data
+@Table(name = "users")
 public class User {
 
-    private int userID;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer userID;
+
     private String firstName;
     private String lastName;
     private String email;
     private String hashedPassword;
     private LocalDate DOB;
 
+    // Three constructor classes: Empty, full constructor and a full constructor without userID.
     public User() {
     }
 
-    public User(String firstName,String lastName, String email, String password, LocalDate DOB, int userID) {
+    public User(String firstName,String lastName, String email, String password, LocalDate DOB, Integer userID) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -62,16 +71,12 @@ public class User {
         this.DOB = DOB;
     }
 
-    public boolean checkDOB(String DOB){
-        // Check DOB is valid
-        return true;
-    }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public int getUserID() {
+    public Integer getUserID() {
         return userID;
     }
 
@@ -89,7 +94,7 @@ public class User {
     }
 
     private String hashingFunction(String password){
-        // Implement a hashing function
+        // Implement a hashing function use SHA-25G
         return password;
     }
 }
