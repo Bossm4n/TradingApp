@@ -16,8 +16,8 @@ import java.util.List;
 @Builder
 @Table(name="assets")
 public class AssetEntity {
-
-    private List<Integer> prices;
+    @Column(length = 4000)
+    private String prices;
     private int marketCap;
 
     @Id
