@@ -54,8 +54,11 @@ public class User {
         return firstName + " " + lastName;
     }
 
-    public void setName(String firstName, String lastName) {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
