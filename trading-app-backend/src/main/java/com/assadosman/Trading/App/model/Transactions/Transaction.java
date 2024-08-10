@@ -1,25 +1,31 @@
 package com.assadosman.Trading.App.model.Transactions;
 
 import com.assadosman.Trading.App.model.Assets.AssetEntity;
-import com.assadosman.Trading.App.model.user.User;
+import jakarta.persistence.*;
+import lombok.Data;
 
+@Entity
+@Data
+@Table
 public class Transaction {
 
-    Integer transactionID;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer transactionID;
 
-    User user;
-    AssetEntity asset;
-    Double numOfAssets;
+    private Integer userID;
+    private AssetEntity asset;
+    private Double numOfAssets;
 
-    public Transaction(Integer transactionID, User user, AssetEntity asset, Double numOfAssets) {
+    public Transaction(Integer transactionID, Integer userID, AssetEntity asset, Double numOfAssets) {
         this.transactionID = transactionID;
-        this.user = user;
+        this.userID = userID;
         this.asset = asset;
         this.numOfAssets = numOfAssets;
     }
 
-    public Transaction(User user, AssetEntity asset, Double numOfAssets) {
-        this.user = user;
+    public Transaction(Integer userID, AssetEntity asset, Double numOfAssets) {
+        this.userID = userID;
         this.asset = asset;
         this.numOfAssets = numOfAssets;
     }
@@ -27,20 +33,12 @@ public class Transaction {
     public Transaction(Double numOfAssets) {
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public Integer getUserID() {
+        return userID;
     }
 
     public AssetEntity getAsset() {
         return asset;
-    }
-
-    public void setAsset(AssetEntity asset) {
-        this.asset = asset;
     }
 
     public Double getNumOfAssets() {

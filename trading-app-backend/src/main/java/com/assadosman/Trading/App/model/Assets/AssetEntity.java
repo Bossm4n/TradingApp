@@ -22,4 +22,8 @@ public class AssetEntity {
 
     @Id
     private final String name;
+
+    public Double getCurrentPrice(){
+        return prices.get(prices.size()-1);
+    }
 }
