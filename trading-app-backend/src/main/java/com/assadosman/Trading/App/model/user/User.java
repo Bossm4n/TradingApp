@@ -20,26 +20,39 @@ public class User {
     private String email;
     private String hashedPassword;
     private LocalDate DOB;
+    private Double balance;
 
     // Three constructor classes: Empty, full constructor and a full constructor without userID.
     public User() {
     }
 
-    public User(String firstName,String lastName, String email, String password, LocalDate DOB, Integer userID) {
+    public User(String firstName, String lastName, String email, String password, LocalDate DOB, Double balance,
+                Integer userID) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.hashedPassword = hashingFunction(password);
         this.DOB = DOB;
         this.userID = userID;
+        this.balance = balance;
     }
 
-    public User(String firstName, String lastName, String email, LocalDate DOB, String hashedPassword ) {
+    public User(String firstName, String lastName, String email, LocalDate DOB, String hashedPassword,
+                Double balance) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.hashedPassword = hashedPassword;
         this.DOB = DOB;
+        this.balance = balance;
+    }
+
+    public Double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Double balance) {
+        this.balance = balance;
     }
 
     public String getFirstName() {

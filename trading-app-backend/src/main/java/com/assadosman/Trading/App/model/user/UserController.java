@@ -35,8 +35,9 @@ public class UserController {
     public void updateUser(@PathVariable("userID") int userID,
                            @RequestParam(required = false) String firstName,
                            @RequestParam(required = false) String lastName,
-                           @RequestParam(required = false) String email
+                           @RequestParam(required = false) String email,
+                           @RequestParam(required = false) Double balance
                            ){
-        userService.updateUser(userID,firstName,lastName,email);
+        userService.updateUser(userID,firstName,lastName,email,balance);
     }
 }
