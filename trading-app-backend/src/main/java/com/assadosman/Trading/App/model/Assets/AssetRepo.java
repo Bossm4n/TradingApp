@@ -4,6 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-
-public interface AssetRepo extends JpaRepository<AssetEntity, String> {
+public interface AssetRepo extends JpaRepository<AssetEntity, Integer> {
 }

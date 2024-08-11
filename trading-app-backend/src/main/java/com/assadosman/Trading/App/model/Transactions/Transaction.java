@@ -4,6 +4,8 @@ import com.assadosman.Trading.App.model.Assets.AssetEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Entity
 @Data
 @Table
@@ -16,18 +18,21 @@ public class Transaction {
     private Integer userID;
     private AssetEntity asset;
     private Double numOfAssets;
+    private LocalDate dateCreated;
 
-    public Transaction(Integer transactionID, Integer userID, AssetEntity asset, Double numOfAssets) {
+    public Transaction(Integer transactionID, Integer userID, AssetEntity asset, Double numOfAssets, LocalDate dateCreated) {
         this.transactionID = transactionID;
         this.userID = userID;
         this.asset = asset;
         this.numOfAssets = numOfAssets;
+        this.dateCreated = dateCreated;
     }
 
-    public Transaction(Integer userID, AssetEntity asset, Double numOfAssets) {
+    public Transaction(Integer userID, AssetEntity asset, Double numOfAssets, LocalDate dateCreated) {
         this.userID = userID;
         this.asset = asset;
         this.numOfAssets = numOfAssets;
+        this.dateCreated = dateCreated;
     }
 
     public Transaction(Double numOfAssets) {

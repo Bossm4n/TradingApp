@@ -16,10 +16,10 @@ public class UserConfig {
         return args -> {
             User steveJobs = new User("Steve","Jobs","steve.jobs@apple.com",
                     "password",LocalDate.of(2000, Month.JANUARY,1),
-                    50000.0,null);
+                    50000.0);
             User billGates = new User("Bill","Gates","bill.gates@microsoft.com",
                     "password",LocalDate.of(2003, Month.JULY,9),
-                    50000.0,null);
+                    50000.0);
 
             repository.saveAll(List.of(steveJobs,billGates));
         };

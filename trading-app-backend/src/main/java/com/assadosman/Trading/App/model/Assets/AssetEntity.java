@@ -1,29 +1,42 @@
 package com.assadosman.Trading.App.model.Assets;
 
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor(force = true)
-@Builder
 @Table(name="assets")
 public class AssetEntity {
 
-    private List<Double> prices;
-    private int marketCap;
-
     @Id
-    private final String name;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private Double price1;
+    private int marketCap;
+    private String name;
+
+    public AssetEntity() {
+
+    }
+
+    public AssetEntity(Integer id, Double price1, int marketCap, String name) {
+        this.price1 = price1;
+        this.marketCap = marketCap;
+        this.id = id;
+        this.name = name;
+    }
+
+    public AssetEntity(Double price1, int marketCap, String name) {
+        this.price1 = price1;
+        this.marketCap = marketCap;
+        this.name = name;
+    }
+
+    //
+//    private final String name;
 
     public Double getCurrentPrice(){
-        return prices.get(prices.size()-1);
+        return price1;
     }
 }

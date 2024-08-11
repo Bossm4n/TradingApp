@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 
 
 @Entity
@@ -22,14 +21,13 @@ public class User {
     private String hashedPassword;
     private LocalDate DOB;
     private Double balance;
-    private HashMap<Integer, Double> assetsPurchased;
 
     // Three constructor classes: Empty, full constructor and a full constructor without userID.
     public User() {
     }
 
     public User(Integer userID, String firstName, String lastName, String email, String hashedPassword, LocalDate DOB,
-                Double balance, HashMap<Integer, Double> assetsPurchased) {
+                Double balance) {
         this.userID = userID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -37,18 +35,15 @@ public class User {
         this.hashedPassword = hashedPassword;
         this.DOB = DOB;
         this.balance = balance;
-        this.assetsPurchased = assetsPurchased;
     }
 
-    public User(String firstName, String lastName, String email, String hashedPassword, LocalDate DOB, Double balance,
-                HashMap<Integer, Double> assetsPurchased) {
+    public User(String firstName, String lastName, String email, String hashedPassword, LocalDate DOB, Double balance) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.hashedPassword = hashedPassword;
         this.DOB = DOB;
         this.balance = balance;
-        this.assetsPurchased = assetsPurchased;
     }
 
     public Double getBalance() {
@@ -116,13 +111,5 @@ public class User {
     private String hashingFunction(String password){
         // Implement a hashing function use SHA-25G
         return password;
-    }
-
-    public HashMap<Integer,Double> getAssets() {
-        return assetsPurchased;
-    }
-
-    public void addAsset(Integer transactionID, Double transactionValue){
-        assetsPurchased.put(transactionID, transactionValue);
     }
 }
