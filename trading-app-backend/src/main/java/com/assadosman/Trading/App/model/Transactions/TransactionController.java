@@ -1,7 +1,7 @@
 package com.assadosman.Trading.App.model.Transactions;
 
-import com.assadosman.Trading.App.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +17,8 @@ public class TransactionController {
     }
 
     @PostMapping
-    public void addTransaction(@RequestBody Transaction transaction, User user){
-        transactionService.buyingTransaction(user,transaction);
+    public void addTransaction(@Validated @RequestBody Transaction transaction){
+        transactionService.buyingTransaction(transaction);
     }
 
     @GetMapping

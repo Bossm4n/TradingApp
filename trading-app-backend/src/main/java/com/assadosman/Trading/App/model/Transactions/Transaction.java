@@ -1,6 +1,5 @@
 package com.assadosman.Trading.App.model.Transactions;
 
-import com.assadosman.Trading.App.model.Assets.AssetEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,34 +15,37 @@ public class Transaction {
     private Integer transactionID;
 
     private Integer userID;
-    private AssetEntity asset;
+    private Integer assetID;
+    // In the future can change it, so we get the price by querying by id and date created
+    private Double assetPrice;
     private Double numOfAssets;
     private LocalDate dateCreated;
 
-    public Transaction(Integer transactionID, Integer userID, AssetEntity asset, Double numOfAssets, LocalDate dateCreated) {
+    public Transaction(){}
+
+    public Transaction(Integer transactionID, Integer userID, Integer assetID, Double assetPrice, Double numOfAssets, LocalDate dateCreated) {
         this.transactionID = transactionID;
         this.userID = userID;
-        this.asset = asset;
+        this.assetID = assetID;
+        this.assetPrice = assetPrice;
         this.numOfAssets = numOfAssets;
         this.dateCreated = dateCreated;
     }
 
-    public Transaction(Integer userID, AssetEntity asset, Double numOfAssets, LocalDate dateCreated) {
+    public Transaction(Integer userID, Integer assetID, Double assetPrice, Double numOfAssets, LocalDate dateCreated) {
         this.userID = userID;
-        this.asset = asset;
+        this.assetID = assetID;
+        this.assetPrice = assetPrice;
         this.numOfAssets = numOfAssets;
         this.dateCreated = dateCreated;
-    }
-
-    public Transaction(Double numOfAssets) {
     }
 
     public Integer getUserID() {
         return userID;
     }
 
-    public AssetEntity getAsset() {
-        return asset;
+    public Double getAssetPrice() {
+        return assetPrice;
     }
 
     public Double getNumOfAssets() {

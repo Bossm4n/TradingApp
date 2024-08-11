@@ -1,11 +1,15 @@
 package com.assadosman.Trading.App.model.user;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping(path="api/v1/user")
 public class UserController {
 
@@ -22,17 +26,19 @@ public class UserController {
     }
 
     @PostMapping
-    public void addUser(@RequestBody User user){
+    public ResponseEntity<String> addUser(@Valid @RequestBody User user){
         userService.addNewUser(user);
+
+        return ResponseEntity.ok("User is valid");
     }
 
     @DeleteMapping(path="{userID}")
-    public void removeUser(@PathVariable("userID") int userID){
+    public void removeUser(@PathVariable("userID") Integer userID){
         userService.removeUser(userID);
     }
 
     @PutMapping(path = "{userID}")
-    public void updateUser(@PathVariable("userID") int userID,
+    public void updateUser(@PathVariable("userID") Integer userID,
                            @RequestParam(required = false) String firstName,
                            @RequestParam(required = false) String lastName,
                            @RequestParam(required = false) String email,

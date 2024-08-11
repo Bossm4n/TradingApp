@@ -21,6 +21,15 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public User getUserByID(Integer userID){
+        if(userRepository.existsById(userID)) {
+            return userRepository.getReferenceById(userID);
+        }
+        else {
+            throw new IllegalStateException("Invalid ID");
+        }
+    }
+
     public void addNewUser(User user) {
         Optional<User> userFoundByEmail = userRepository.findUserByEmail(user.getEmail());
         if(userFoundByEmail.isPresent()){

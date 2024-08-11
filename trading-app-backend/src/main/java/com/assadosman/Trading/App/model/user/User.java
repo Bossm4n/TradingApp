@@ -1,6 +1,7 @@
 package com.assadosman.Trading.App.model.user;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -8,18 +9,29 @@ import java.time.LocalDate;
 
 @Entity
 @Data
-@Table
+@Table(name = "user")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userID;
 
+    @NotNull(message = "First Name cannot be null!")
     private String firstName;
+
+    @NotNull(message = "Last Name cannot be null!")
     private String lastName;
+
+    @NotNull(message = "Email cannot be null!")
     private String email;
+
+    @NotNull(message = "You password cannot be null!")
     private String hashedPassword;
+
+    @NotNull(message = "Your Date of Birth cannot be null!")
     private LocalDate DOB;
+
+    @NotNull(message = "Your balance cannot be null!")
     private Double balance;
 
     // Three constructor classes: Empty, full constructor and a full constructor without userID.
@@ -109,7 +121,7 @@ public class User {
     }
 
     private String hashingFunction(String password){
-        // Implement a hashing function use SHA-25G
+        // Implement a hashing function use SHA-256
         return password;
     }
 }
