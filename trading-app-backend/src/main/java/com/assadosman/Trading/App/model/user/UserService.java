@@ -62,7 +62,7 @@ public class UserService {
         if (lastName != null && !lastName.isEmpty() && lastName.length()<30 && !Objects.equals(user.getLastName(), lastName)){
             user.setLastName(lastName);
         }
-        if (balance != null && balance>0){
+        if (balance != null && balance > 0){
             user.setBalance(balance);
         }
         if (email != null && checkEmail(email) && !Objects.equals(user.getEmail(), email)){
@@ -72,6 +72,16 @@ public class UserService {
             }
             user.setEmail(email);
         }
+    }
+
+    @Transactional
+    public void updateUserBalance(Integer userID, Double balance){
+        if(!userRepository.existsById(userID)){
+            throw new IllegalStateException("Invalid user ID");
+        }
+        User user = userRepository.getReferenceById(userID);
+
+        user.addToBalance(balance);
     }
 
     public boolean checkEmail(String email){

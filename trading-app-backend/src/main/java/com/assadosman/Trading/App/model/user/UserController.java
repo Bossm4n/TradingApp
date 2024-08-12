@@ -2,6 +2,7 @@ package com.assadosman.Trading.App.model.user;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class UserController {
     public ResponseEntity<String> addUser(@Valid @RequestBody User user){
         userService.addNewUser(user);
 
-        return ResponseEntity.ok("User is valid");
+        return new ResponseEntity<>("User is valid", HttpStatus.OK);
     }
 
     @DeleteMapping(path="{userID}")
@@ -37,13 +38,20 @@ public class UserController {
         userService.removeUser(userID);
     }
 
-    @PutMapping(path = "{userID}")
+    @PutMapping(path = "/set/{userID}")
     public void updateUser(@PathVariable("userID") Integer userID,
                            @RequestParam(required = false) String firstName,
                            @RequestParam(required = false) String lastName,
                            @RequestParam(required = false) String email,
                            @RequestParam(required = false) Double balance
                            ){
-        userService.updateUser(userID,firstName,lastName,email,balance);
+        userService.updateUser(userID, firstName, lastName, email, balance);
+    }
+
+    @PutMapping(path = "/update_balance/{userID}")
+    public void updateBalance(@PathVariable("userID") Integer userID,
+                           @RequestParam(required = true) Double balance
+    ){
+        userService.updateUserBalance(userID, balance);
     }
 }

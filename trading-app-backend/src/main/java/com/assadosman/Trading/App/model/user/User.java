@@ -66,6 +66,10 @@ public class User {
         this.balance = balance;
     }
 
+    public void addToBalance(Double additionalBalance){
+        this.balance += additionalBalance;
+    }
+
     public String getFirstName() {
         return firstName;
     }

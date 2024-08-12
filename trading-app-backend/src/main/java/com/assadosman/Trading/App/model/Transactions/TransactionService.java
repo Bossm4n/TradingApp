@@ -21,6 +21,17 @@ public class TransactionService {
         this.assetsService = assetsService;
     }
 
+    public List<Transaction> findAllByUserID(Integer userID){
+        return transactionRepository.findAllByUserID(userID);
+    }
+
+    public List<Transaction> findAllByAssetID(Integer assetID){
+        return transactionRepository.findAllByAssetID(assetID);
+    }
+
+    public List<Transaction> findAllWithUserAndAssetID(Integer userID, Integer assetID){
+        return transactionRepository.findAllByUserIDAndAssetID(userID, assetID);
+    }
 
 //    public TransactionService(TransactionRepository transactionRepository) {
 //        this.transactionRepository = transactionRepository;
@@ -36,22 +47,23 @@ public class TransactionService {
     public void buyingTransaction(Transaction transaction){
         Integer userID = transaction.getUserID();
 
-        System.out.println(userID);
-
         User user = userService.getUserByID(userID);
         Double userBalance = user.getBalance();
 
-        Double assetCurrentPrice = transaction.getAssetPrice();
+        AssetEntity asset = assetsService.getAssetByID(transaction.getAssetID());
+        Double assetCurrentPrice = asset.getCurrentPrice();
+
         Double numOfAssets = transaction.getNumOfAssets();
 
         if(transactionValid(userBalance, assetCurrentPrice, numOfAssets)) {
-            Double newBalance = userBalance - numOfAssets * assetCurrentPrice;
+            Double costOfAssets = numOfAssets * assetCurrentPrice;
 
-            userService.updateUser(userID, null, null, null, newBalance);
+            userService.updateUserBalance(userID, -costOfAssets);
+            transaction.setAssetPrice(assetCurrentPrice);
             transactionRepository.save(transaction);
         }
         else {
-            System.out.println("TRANSACTION FAILED");
+            throw new IllegalStateException("The user has insufficient funds!");
         }
     }
 
@@ -59,25 +71,39 @@ public class TransactionService {
     public void sellAsset(Transaction transaction){
         Integer userID = transaction.getUserID();
         Integer assetID = transaction.getAssetID();
+        // numOfAssets should be negative as we are selling but for ease we make it positive
+        Double numOfAssets = -1 * transaction.getNumOfAssets();
 
-        User user = userService.getUserByID(userID);
-        Double userBalance = user.getBalance();
+        if(!userCanSellAsset(userID, assetID, numOfAssets) || numOfAssets <= 0) {
+            throw new IllegalStateException("The user does not have enough of the asset to sell it!");
+        }
 
         AssetEntity asset = assetsService.getAssetByID(assetID);
         Double assetCurrentPrice = asset.getCurrentPrice();
 
-        Double numOfAssets = transaction.getNumOfAssets();
-        Double saleOfAsset = numOfAssets * assetCurrentPrice;
+        Double saleOfAsset = assetCurrentPrice * numOfAssets;
 
-        if(transactionValid(userBalance, assetCurrentPrice, numOfAssets)) {
-            Double newBalance = userBalance - numOfAssets * assetCurrentPrice;
+        userService.updateUserBalance(userID, saleOfAsset);
 
-            userService.updateUser(userID, null, null, null, newBalance);
-            transactionRepository.save(transaction);
+        transaction.setAssetPrice(assetCurrentPrice);
+
+        transactionRepository.save(transaction);
+    }
+
+    public boolean userCanSellAsset(Integer userID, Integer assetID, Double numOfAssets){
+        List<Transaction> transactionsOfAssetByUser = findAllWithUserAndAssetID(userID, assetID);
+        Double numOfAssetsOwned = 0d;
+
+        System.out.println("yo");
+
+        for(Transaction transaction: transactionsOfAssetByUser){
+            // We get the number of assets bought/sold in each transaction then sum this number up to see how many
+            // assets the user currently owns
+            numOfAssetsOwned += transaction.getNumOfAssets();
         }
-        else {
-            System.out.println("SALE FAILED");
-        }
+        System.out.println(numOfAssetsOwned);
+
+        return numOfAssetsOwned >= numOfAssets;
     }
 
     public List<Transaction> getTransactions() {

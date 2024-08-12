@@ -32,10 +32,25 @@ public class Transaction {
         this.dateCreated = dateCreated;
     }
 
+    public Transaction(Integer transactionID, Integer userID, Integer assetID, Double numOfAssets, LocalDate dateCreated) {
+        this.transactionID = transactionID;
+        this.userID = userID;
+        this.assetID = assetID;
+        this.numOfAssets = numOfAssets;
+        this.dateCreated = dateCreated;
+    }
+
     public Transaction(Integer userID, Integer assetID, Double assetPrice, Double numOfAssets, LocalDate dateCreated) {
         this.userID = userID;
         this.assetID = assetID;
         this.assetPrice = assetPrice;
+        this.numOfAssets = numOfAssets;
+        this.dateCreated = dateCreated;
+    }
+
+    public Transaction(Integer userID, Integer assetID, Double numOfAssets, LocalDate dateCreated) {
+        this.userID = userID;
+        this.assetID = assetID;
         this.numOfAssets = numOfAssets;
         this.dateCreated = dateCreated;
     }
@@ -46,6 +61,10 @@ public class Transaction {
 
     public Double getAssetPrice() {
         return assetPrice;
+    }
+
+    public void setAssetPrice(Double assetPrice) {
+        this.assetPrice = assetPrice;
     }
 
     public Double getNumOfAssets() {
