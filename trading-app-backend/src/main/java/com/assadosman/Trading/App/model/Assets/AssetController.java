@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path="api/assets")
 public class AssetController {
+
     private AssetRepo assetRepo;
 
     public AssetController(AssetRepo assetRepo) {
