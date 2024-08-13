@@ -15,7 +15,7 @@ public class Transaction {
     private Integer transactionID;
 
     private Integer userID;
-    private Integer assetID;
+    private String assetISIN;
     // In the future can change it, so we get the price by querying by id and date created
     private Double assetPrice;
     private Double numOfAssets;
@@ -23,34 +23,34 @@ public class Transaction {
 
     public Transaction(){}
 
-    public Transaction(Integer transactionID, Integer userID, Integer assetID, Double assetPrice, Double numOfAssets, LocalDate dateCreated) {
+    public Transaction(Integer transactionID, Integer userID, String assetISIN, Double assetPrice, Double numOfAssets, LocalDate dateCreated) {
         this.transactionID = transactionID;
         this.userID = userID;
-        this.assetID = assetID;
+        this.assetISIN = assetISIN;
         this.assetPrice = assetPrice;
         this.numOfAssets = numOfAssets;
         this.dateCreated = dateCreated;
     }
 
-    public Transaction(Integer transactionID, Integer userID, Integer assetID, Double numOfAssets, LocalDate dateCreated) {
+    public Transaction(Integer transactionID, Integer userID, String assetISIN, Double numOfAssets, LocalDate dateCreated) {
         this.transactionID = transactionID;
         this.userID = userID;
-        this.assetID = assetID;
+        this.assetISIN = assetISIN;
         this.numOfAssets = numOfAssets;
         this.dateCreated = dateCreated;
     }
 
-    public Transaction(Integer userID, Integer assetID, Double assetPrice, Double numOfAssets, LocalDate dateCreated) {
+    public Transaction(Integer userID, String assetISIN, Double assetPrice, Double numOfAssets, LocalDate dateCreated) {
         this.userID = userID;
-        this.assetID = assetID;
+        this.assetISIN = assetISIN;
         this.assetPrice = assetPrice;
         this.numOfAssets = numOfAssets;
         this.dateCreated = dateCreated;
     }
 
-    public Transaction(Integer userID, Integer assetID, Double numOfAssets, LocalDate dateCreated) {
+    public Transaction(Integer userID, String assetISIN, Double numOfAssets, LocalDate dateCreated) {
         this.userID = userID;
-        this.assetID = assetID;
+        this.assetISIN = assetISIN;
         this.numOfAssets = numOfAssets;
         this.dateCreated = dateCreated;
     }

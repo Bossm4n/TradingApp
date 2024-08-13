@@ -25,17 +25,13 @@ public class TransactionService {
         return transactionRepository.findAllByUserID(userID);
     }
 
-    public List<Transaction> findAllByAssetID(Integer assetID){
-        return transactionRepository.findAllByAssetID(assetID);
+    public List<Transaction> findAllByAssetISIN(String assetISIN){
+        return transactionRepository.findAllByAssetISIN(assetISIN);
     }
 
-    public List<Transaction> findAllWithUserAndAssetID(Integer userID, Integer assetID){
-        return transactionRepository.findAllByUserIDAndAssetID(userID, assetID);
+    public List<Transaction> findAllByUserIDAndAssetISIN(Integer userID, String assetISIN){
+        return transactionRepository.findAllByUserIDAndAssetISIN(userID, assetISIN);
     }
-
-//    public TransactionService(TransactionRepository transactionRepository) {
-//        this.transactionRepository = transactionRepository;
-//    }
 
     public boolean transactionValid(Double userBalance, Double assetCurrentPrice, Double numOfShares){
         // Implement longing and shorts soon
@@ -50,7 +46,7 @@ public class TransactionService {
         User user = userService.getUserByID(userID);
         Double userBalance = user.getBalance();
 
-        AssetEntity asset = assetsService.getAssetByID(transaction.getAssetID());
+        AssetEntity asset = assetsService.getAssetByISIN(transaction.getAssetISIN());
         Double assetCurrentPrice = asset.getCurrentPrice();
 
         Double numOfAssets = transaction.getNumOfAssets();
@@ -70,15 +66,15 @@ public class TransactionService {
     // Write code
     public void sellAsset(Transaction transaction){
         Integer userID = transaction.getUserID();
-        Integer assetID = transaction.getAssetID();
+        String assetISIN = transaction.getAssetISIN();
         // numOfAssets should be negative as we are selling but for ease we make it positive
         Double numOfAssets = -1 * transaction.getNumOfAssets();
 
-        if(!userCanSellAsset(userID, assetID, numOfAssets) || numOfAssets <= 0) {
+        if(!userCanSellAsset(userID, assetISIN, numOfAssets) || numOfAssets <= 0) {
             throw new IllegalStateException("The user does not have enough of the asset to sell it!");
         }
 
-        AssetEntity asset = assetsService.getAssetByID(assetID);
+        AssetEntity asset = assetsService.getAssetByISIN(assetISIN);
         Double assetCurrentPrice = asset.getCurrentPrice();
 
         Double saleOfAsset = assetCurrentPrice * numOfAssets;
@@ -90,8 +86,8 @@ public class TransactionService {
         transactionRepository.save(transaction);
     }
 
-    public boolean userCanSellAsset(Integer userID, Integer assetID, Double numOfAssets){
-        List<Transaction> transactionsOfAssetByUser = findAllWithUserAndAssetID(userID, assetID);
+    public boolean userCanSellAsset(Integer userID, String assetISIN, Double numOfAssets){
+        List<Transaction> transactionsOfAssetByUser = findAllByUserIDAndAssetISIN(userID, assetISIN);
         Double numOfAssetsOwned = 0d;
 
         System.out.println("yo");

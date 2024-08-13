@@ -10,12 +10,12 @@ public class AssetsService {
         this.assetRepo = assetRepo;
     }
 
-    public AssetEntity getAssetByID(Integer assetID){
-        if(assetRepo.existsById(assetID)){
-            return assetRepo.getReferenceById(assetID);
+    public AssetEntity getAssetByISIN(String assetISIN){
+        if(assetRepo.existsByISIN(assetISIN)){
+            return assetRepo.getReferenceByISIN(assetISIN);
         }
         else {
-            throw new IllegalStateException("No Asset with the ID " + assetID);
+            throw new IllegalStateException("No Asset with the ISIN " + assetISIN);
         }
     }
 }

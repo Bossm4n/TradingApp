@@ -8,6 +8,6 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
     List<Transaction> findAllByUserID(Integer userID);
-    List<Transaction> findAllByAssetID(Integer assetID);
-    List<Transaction> findAllByUserIDAndAssetID(Integer userID, Integer assetID);
+    List<Transaction> findAllByAssetISIN(String assetISIN);
+    List<Transaction> findAllByUserIDAndAssetISIN(Integer userID, String assetISIN);
 }
