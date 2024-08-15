@@ -1,36 +1,41 @@
 package com.assadosman.Trading.App.model.Transactions;
 
 import com.assadosman.Trading.App.model.Assets.AssetEntity;
+import com.assadosman.Trading.App.model.Assets.AssetRepo;
 import com.assadosman.Trading.App.model.Assets.AssetsService;
 import com.assadosman.Trading.App.model.user.User;
 import com.assadosman.Trading.App.model.user.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserService userService;
     private final AssetsService assetsService;
+    public AssetRepo assetRepo;
 
     public TransactionService(TransactionRepository transactionRepository, UserService userService,
-                              AssetsService assetsService) {
+                              AssetsService assetsService, AssetRepo assetRepo) {
         this.transactionRepository = transactionRepository;
         this.userService = userService;
         this.assetsService = assetsService;
+        this.assetRepo = assetRepo;
     }
 
     public List<Transaction> findAllByUserID(Integer userID){
         return transactionRepository.findAllByUserID(userID);
     }
 
-    public List<Transaction> findAllByAssetISIN(String assetISIN){
-        return transactionRepository.findAllByAssetISIN(assetISIN);
+    public List<Transaction> findAllByAssetName(String assetName){
+        return transactionRepository.findAllByAssetName(assetName);
     }
 
-    public List<Transaction> findAllByUserIDAndAssetISIN(Integer userID, String assetISIN){
-        return transactionRepository.findAllByUserIDAndAssetISIN(userID, assetISIN);
+    public List<Transaction> findAllByUserIDAndAssetName(Integer userID, String assetName){
+        return transactionRepository.findAllByUserIDAndAssetName(userID, assetName);
     }
 
     public boolean transactionValid(Double userBalance, Double assetCurrentPrice, Double numOfShares){
@@ -40,14 +45,19 @@ public class TransactionService {
         return userBalance >= valueOfTransaction;
     }
 
-    public void buyingTransaction(Transaction transaction){
+    public void buyingTransaction(Transaction transaction) throws JsonProcessingException, AssetDoesntExistException {
         Integer userID = transaction.getUserID();
 
         User user = userService.getUserByID(userID);
         Double userBalance = user.getBalance();
 
-        AssetEntity asset = assetsService.getAssetByISIN(transaction.getAssetISIN());
-        Double assetCurrentPrice = asset.getCurrentPrice();
+
+        Optional<AssetEntity> assetOptional = assetRepo.findById(transaction.getAssetName());
+        if (! assetOptional.isPresent()){
+            throw new AssetDoesntExistException();
+        }
+        AssetEntity asset = assetOptional.get();
+        Double assetCurrentPrice = this.assetsService.getCurrentPrice(asset.getName());
 
         Double numOfAssets = transaction.getNumOfAssets();
 
@@ -64,9 +74,9 @@ public class TransactionService {
     }
 
     // Write code
-    public void sellAsset(Transaction transaction){
+    public void sellAsset(Transaction transaction) throws AssetDoesntExistException, JsonProcessingException {
         Integer userID = transaction.getUserID();
-        String assetISIN = transaction.getAssetISIN();
+        String assetISIN = transaction.getAssetName();
         // numOfAssets should be negative as we are selling but for ease we make it positive
         Double numOfAssets = -1 * transaction.getNumOfAssets();
 
@@ -74,8 +84,12 @@ public class TransactionService {
             throw new IllegalStateException("The user does not have enough of the asset to sell it!");
         }
 
-        AssetEntity asset = assetsService.getAssetByISIN(assetISIN);
-        Double assetCurrentPrice = asset.getCurrentPrice();
+        Optional<AssetEntity> assetOptional = assetRepo.findById(transaction.getAssetName());
+        if (! assetOptional.isPresent()){
+            throw new AssetDoesntExistException();
+        }
+        AssetEntity asset = assetOptional.get();
+        Double assetCurrentPrice = this.assetsService.getCurrentPrice(asset.getName());
 
         Double saleOfAsset = assetCurrentPrice * numOfAssets;
 
@@ -87,7 +101,7 @@ public class TransactionService {
     }
 
     public boolean userCanSellAsset(Integer userID, String assetISIN, Double numOfAssets){
-        List<Transaction> transactionsOfAssetByUser = findAllByUserIDAndAssetISIN(userID, assetISIN);
+        List<Transaction> transactionsOfAssetByUser = findAllByUserIDAndAssetName(userID, assetISIN);
         Double numOfAssetsOwned = 0d;
 
         System.out.println("yo");
@@ -113,5 +127,11 @@ public class TransactionService {
 
         Transaction transaction = transactionRepository.getReferenceById(transactionID);
         transactionRepository.delete(transaction);
+    }
+
+    public class AssetDoesntExistException extends Exception{
+        public AssetDoesntExistException() {
+            super();
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.assadosman.Trading.App.model.Transactions;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class TransactionController {
     }
 
     @PostMapping("/buy")
-    public ResponseEntity<String> addBuyingTransaction(@Valid @RequestBody Transaction transaction){
+    public ResponseEntity<String> addBuyingTransaction(@Valid @RequestBody Transaction transaction) throws JsonProcessingException, TransactionService.AssetDoesntExistException {
         if(transaction.getNumOfAssets()<=0){
             return new ResponseEntity<>("Invalid Number of assets", HttpStatus.BAD_REQUEST);
         }
@@ -35,7 +36,7 @@ public class TransactionController {
     }
 
     @PostMapping("/sell")
-    public ResponseEntity<String> addSellingTransaction(@Valid @RequestBody Transaction transaction){
+    public ResponseEntity<String> addSellingTransaction(@Valid @RequestBody Transaction transaction) throws JsonProcessingException, TransactionService.AssetDoesntExistException {
         transactionService.sellAsset(transaction);
 
         return new ResponseEntity<>("Successfully sold your asset('s)", HttpStatus.OK);
