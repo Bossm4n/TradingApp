@@ -1,99 +1,230 @@
-import React, { Component } from "react";
-import Navbar from "../components/Navbar";
-import { get } from "http";
+import React, { useEffect, useRef, useState } from 'react';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend, TimeScale } from 'chart.js';
+import 'chartjs-adapter-date-fns';
+import Navbar from '../components/Navbar';
 
-interface TradingComponent {
-  name: string;
+ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend, TimeScale);
+
+interface StockData {
+  date: string;
+  open: number;
+  close: number;
+  high: number;
+  low: number;
+  volume: number;
 }
 
-interface Stock {
-  name: string;
-  stockID: number;
-  prices: StockAtPrice[];
+const generateRandomStockData = (symbol: string, basePrice: number = 100, volatility: number = 2, days: number = 100): StockData[] => {
+  const stockData: StockData[] = [];
+  let currentPrice: number = basePrice;
+
+  for (let i = 0; i < days; i++) {
+    const changePercent: number = (Math.random() * 2 - 1) * volatility;
+    currentPrice = parseFloat((currentPrice * (1 + changePercent / 100)).toFixed(2));
+
+    const open = currentPrice;
+    const close = parseFloat((currentPrice * (1 + (Math.random() * 2 - 1) * volatility / 100)).toFixed(2));
+    const high = parseFloat((currentPrice * (1 + Math.random() * volatility / 100)).toFixed(2));
+    const low = parseFloat((currentPrice * (1 - Math.random() * volatility / 100)).toFixed(2));
+    const volume = Math.floor(Math.random() * 1000000) + 100000;
+
+    stockData.push({
+      date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      open,
+      close,
+      high,
+      low,
+      volume
+    });
+  }
+
+  return stockData.reverse(); // Return in chronological order
 }
 
-interface StockAtPrice {
-  time: string;
-  price: number;
-}
-
-const apple: Stock = {
-  name: "apple",
-  stockID: 1,
-  prices: [
-    // Format is DD/mm/YYYY:hh:MM:ss
-    { time: "01/01/2000:00:00:00", price: 1 },
-    { time: "01/02/2000:00:00:00", price: 2 },
-    { time: "01/03/2000:00:00:00", price: 3 },
-    { time: "01/04/2000:00:00:00", price: 4 },
-    { time: "01/05/2000:00:00:00", price: 5 },
-    { time: "01/06/2000:00:00:00", price: 6 },
-    { time: "01/07/2000:00:00:00", price: 7 },
-    { time: "01/08/2000:00:00:00", price: 8 },
-    { time: "01/09/2000:00:00:00", price: 9 },
-    { time: "01/10/2000:00:00:00", price: 10 },
-    { time: "01/11/2000:00:00:00", price: 11 },
-    { time: "01/12/2000:00:00:00", price: 12 },
-    { time: "01/13/2000:00:00:00", price: 13 },
-    { time: "01/14/2000:00:00:00", price: 14 },
-    { time: "01/15/2000:00:00:00", price: 15 },
-    { time: "01/16/2000:00:00:00", price: 16 },
-    { time: "01/17/2000:00:00:00", price: 17 },
-    { time: "01/18/2000:00:00:00", price: 18 },
-    { time: "01/19/2000:00:00:00", price: 19 },
-    { time: "01/20/2000:00:00:00", price: 20 },
-  ],
-};
-
-const TradingPage = () => {
-  // Function that gets all components for trading (e.g. fibonannci retracement)
-  const getComponenets: () => TradingComponent[] = () => {
-    const allComponents: TradingComponent[] = [];
-    for (let i = 1; i < 7; i += 1) {
-      const tempComponent: TradingComponent = { name: `Component ${i}` };
-      allComponents.push(tempComponent);
+const styles: { [key: string]: React.CSSProperties } = {
+    scrollableContainer: {
+      overflowX: "auto",
+      whiteSpace: "nowrap",
+      padding: "10px 0"
+    },
+    horizontalList: {
+      display: "flex", 
+      listStyleType: "none", 
+      margin: 0, 
+      padding: 0
+    },
+    listItem: {
+      marginRight: "20px",
+      padding: "15px", 
+      minWidth: "150px",
+      backgroundColor: "#f0f0f0",
+      borderRadius: "4px", 
+      cursor: "pointer", 
+      transition: "background-color 0.3s, transform 0.3s"
+    },
+    chartContainer: {
+      marginTop: "20px",
+      width: "100%",
+      maxWidth: "1200px",
+      margin: "0 auto"
     }
-
-    return allComponents;
   };
 
-  const getStock: (ID: number) => Stock = (ID: number) => {
-    // DO STOCK STUFF
+const TradingPage: React.FC = () => {
+  const [chartData, setChartData] = useState<any>(null);
+  const chartRef = useRef<any>(null);
 
-    return apple;
+  const marketFunds: { [key: string]: string } = {
+    "S&P 500": "SPX",
+    "Nasdaq 100": "NDX",
+    "Dow 30": "DJI",
+    "Nikkei 225": "N225",
+    "FTSE 100": "FTSE",
+    "DAX": "DAX",
+    "CAC 40": "CAC",
+    "FTSE MIB": "MIB",
+    "IBEX 35": "IBEX",
+    "SSE Composite": "SSEC",
+    "Hang Seng": "HSI",
+    "Nifty 50": "NIFTY"
   };
+
+  const fetchFromApi = (companyName: string) => {
+    fetch(`http://13.60.231.205:8080/api/assets/${companyName}`)
+      .then(response => response.json())
+      .then(data => {
+        setChartData({
+          labels: data.map((item: StockData) => item.date),
+          datasets: [{
+            label: companyName,
+            data: data.map((item: StockData) => ({
+              x: item.date,
+              y: item.close
+            })),
+            borderColor: (context: any) => {
+              const chart = context.chart;
+              const { dataIndex } = context;
+              
+              if (dataIndex === 0) return 'gray'; // Default color for the first data point
+
+              const currentValue = chart.data.datasets[0].data[dataIndex];
+              const previousValue = chart.data.datasets[0].data[dataIndex - 1];
+              
+              if (!currentValue || !previousValue) return 'gray'; // Default color if current or previous value is missing
+
+              return currentValue.y > previousValue.y ? 'green' : 'red';
+            },
+            backgroundColor: 'transparent',
+            pointRadius: 0, // Remove the circles at the peaks
+            borderWidth: 2,
+          }]
+        });
+      })
+      .catch(() => {
+        setChartData({
+          labels: generateRandomStockData("Sample").map(item => item.date),
+          datasets: [{
+            label: "Sample",
+            data: generateRandomStockData("Sample").map(item => ({
+              x: item.date,
+              y: item.close
+            })),
+            borderColor: (context: any) => {
+              const chart = context.chart;
+              const { dataIndex } = context;
+              
+              if (dataIndex === 0) return 'gray'; // Default color for the first data point
+
+              const currentValue = chart.data.datasets[0].data[dataIndex];
+              const previousValue = chart.data.datasets[0].data[dataIndex - 1];
+              
+              if (!currentValue || !previousValue) return 'gray'; // Default color if current or previous value is missing
+
+              return currentValue.y > previousValue.y ? 'green' : 'red';
+            },
+            backgroundColor: 'transparent',
+            pointRadius: 0, // Remove the circles at the peaks
+            borderWidth: 2,
+          }]
+        });
+      });
+  }
+
+  useEffect(() => {
+    fetchFromApi('SPX');
+    
+    // Cleanup chart instance on unmount
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+    }
+  }, []);
 
   return (
-    <div className="">
+    <div>
       <Navbar />
-
-      {/* Title */}
       <div>TradingPage</div>
-
-      <div className="bg-slate-100 flex flex-row">
-        {/* Loops through all trading componenets and then adds the to the list */}
-        <ul className="w-36 bg-slate-50">
-          {getComponenets().map((tradingComponent) => {
-            return <li>{tradingComponent.name}</li>;
-          })}
-        </ul>
-
-        {/* Contains all the live data */}
-        <div>
-          <div>Trading</div>
-          <ul>
-            {getStock(1).prices.map((stockAtPrice: StockAtPrice) => {
-              const date = stockAtPrice.time.slice(0, 10);
-              const stockPrice = stockAtPrice.time.slice(11);
-              return (
-                <li>
-                  The {getStock(1).name} stock cost {stockAtPrice.price} on{" "}
-                  {date} at {stockPrice}
-                </li>
-              );
-            })}
+      <div>
+        <h1>Market Summary</h1>
+        <div style={styles.scrollableContainer}>
+          <ul style={styles.horizontalList}>
+            {Object.entries(marketFunds).map(([name, symbol], index) => (
+              <li
+                key={index}
+                style={styles.listItem}
+                onClick={() => fetchFromApi(symbol)}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#f0f0f0")}
+              >
+                {name}
+              </li>
+            ))}
           </ul>
         </div>
+        {chartData && (
+          <div>
+            <h2>Chart for {chartData.datasets[0].label}</h2>
+            <Line
+              ref={chartRef}
+              data={chartData}
+              options={{
+                scales: {
+                  x: {
+                    type: 'time',
+                    time: {
+                      unit: 'day',
+                      tooltipFormat: 'MMM dd, yyyy',
+                    },
+                    title: {
+                      display: true,
+                      text: 'Date',
+                    },
+                  },
+                  y: {
+                    title: {
+                      display: true,
+                      text: 'Price',
+                    },
+                    beginAtZero: false,
+                  },
+                },
+                plugins: {
+                  legend: {
+                    display: true,
+                    position: 'top',
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: (context: any) => `Price: ${context.parsed.y}`,
+                    },
+                  },
+                },
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

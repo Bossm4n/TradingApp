@@ -6,6 +6,7 @@ const Login = () => {
   const [password, setPassword] = useState("")
   const handleEmailChange=(e:any)=>{setEmail(e.target.value)}
   const handlePasswordChange=(e:any)=>{setPassword(e.target.value)}
+
   const handleSubmit = ()=>{}
   return (<>
     <Navbar/>
