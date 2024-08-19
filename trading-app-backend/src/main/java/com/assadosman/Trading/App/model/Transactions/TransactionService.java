@@ -53,7 +53,7 @@ public class TransactionService {
 
 
         Optional<AssetEntity> assetOptional = assetRepo.findById(transaction.getAssetName());
-        if (! assetOptional.isPresent()){
+        if (assetOptional.isEmpty()){
             throw new AssetDoesntExistException();
         }
         AssetEntity asset = assetOptional.get();

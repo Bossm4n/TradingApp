@@ -9,9 +9,7 @@ public class TradingAppApplication {
 
 	public static void main(String[] args) {
 		// Loading Dontenv ensures that we can use our env file to access the database
-		Dotenv dotenv = Dotenv.configure()
-				.directory("/") // if in resources, use "/"
-				.load();
+		Dotenv dotenv = Dotenv.load();
 		SpringApplication.run(TradingAppApplication.class, args);
 	}
 

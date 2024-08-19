@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @Validated
-@RequestMapping(path="api/v1/user")
+@RequestMapping(path="api/user")
 public class UserController {
 
     private final UserService userService;

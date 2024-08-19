@@ -1,18 +1,13 @@
 package com.assadosman.Trading.App.model.Transactions;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Entity
 @Data
 @Table
-@AllArgsConstructor
-@Builder
 public class Transaction {
 
     @Id
@@ -26,6 +21,8 @@ public class Transaction {
     private Double numOfAssets;
     private LocalDate dateCreated;
 
+    public Transaction() {
+    }
 
     public Transaction(Integer transactionID, Integer userID, String assetName, Double numOfAssets, LocalDate dateCreated) {
         this.transactionID = transactionID;
