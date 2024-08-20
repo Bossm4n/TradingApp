@@ -167,6 +167,7 @@ const TradingPage: React.FC = () => {
     <div>
       <Navbar />
       <div>TradingPage</div>
+      <SearchBar fetchFromApi={fetchFromApi} />
       <div>
         <h1>Market Summary</h1>
         <div style={styles.scrollableContainer}>
@@ -187,7 +188,6 @@ const TradingPage: React.FC = () => {
         {chartData && (
           <div>
             <h2>Chart for {chartData.datasets[0].label}</h2>
-            <SearchBar></SearchBar>
             <Line
               ref={chartRef}
               data={chartData}

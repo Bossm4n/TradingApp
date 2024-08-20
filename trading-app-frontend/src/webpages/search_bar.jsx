@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import stockSymbols from './companies';
 
-const SearchBar = () => {
+const SearchBar = ({ fetchFromApi }) => {
   const [query, setQuery] = useState('');
   const [filteredSymbols, setFilteredSymbols] = useState([]);
 
@@ -22,20 +22,39 @@ const SearchBar = () => {
     const results = stockSymbols.filter(symbol => 
       symbol.startsWith(searchQuery)
     );
-    setFilteredSymbols(results.slice(0, 10)); // Limit to first 10 results
+    setFilteredSymbols(results);
+  };
+
+  // Handle the search result click
+  const handleResultClick = (symbol) => {
+    // Update the input field with the selected symbol
+    setQuery(symbol);
+
+    // Clear the filtered symbols list
+    setFilteredSymbols([]);
+
+    // Call the API with the selected symbol
+    fetchFromApi(symbol);
   };
 
   return (
     <div>
       <input 
+        id="search"
         type="text"
         value={query}
         onChange={handleInputChange}
         placeholder="Search stock symbols..."
       />
-      <ul style={{ maxHeight: '200px', overflowY: 'auto', padding: 0, margin: 0, listStyleType: 'none' }}>
-        {filteredSymbols.map((symbol, index) => (
-          <li key={index} style={{ padding: '5px 0' }}>{symbol}</li>
+      <ul style={{ maxHeight: '200px', overflowY: 'scroll' }}>
+        {filteredSymbols.slice(0, 10).map((symbol, index) => (
+          <li 
+            key={index}
+            onClick={() => handleResultClick(symbol)}
+            style={{ cursor: 'pointer' }}
+          >
+            {symbol}
+          </li>
         ))}
       </ul>
     </div>
