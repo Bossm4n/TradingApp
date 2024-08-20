@@ -3,6 +3,7 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend, TimeScale } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import Navbar from '../components/Navbar';
+import SearchBar from './search_bar';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend, TimeScale);
 
@@ -186,6 +187,7 @@ const TradingPage: React.FC = () => {
         {chartData && (
           <div>
             <h2>Chart for {chartData.datasets[0].label}</h2>
+            <SearchBar></SearchBar>
             <Line
               ref={chartRef}
               data={chartData}
