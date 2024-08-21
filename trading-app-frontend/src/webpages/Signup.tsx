@@ -1,7 +1,7 @@
 import { Sign } from "crypto";
 import Navbar from "../components/Navbar";
 import React, { useEffect, useState } from "react";
-import User from "../../interfaces/User";
+import User from "../interfaces/User";
 import { error } from "console";
 import { useNavigate } from "react-router-dom";
 
