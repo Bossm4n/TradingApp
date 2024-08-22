@@ -1,11 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import User from "../interfaces/User";
 import Navbar from "../components/Navbar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import HashingFunction from "../components/HashingFunction";
+import ComparePasswords from "../components/ComparePasswords";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+
+  const references = [passwordRef, emailRef];
 
   const navigate = useNavigate();
   const loggedIn = JSON.parse(sessionStorage.getItem("active") || "false");
@@ -22,20 +26,20 @@ const Login = () => {
     return null; // or return a loading spinner
   }
 
-  const handleEmailChange = (e: any) => {
-    setEmail(e.target.value);
-  };
-  const handlePasswordChange = (e: any) => {
-    setPassword(e.target.value);
-  };
-
   const handleSubmit = () => {
-    fetch(
-      `http://localhost:8080/api/user/email-and-password?email=${email}&password=${password}`
-    )
+    for (const ref of references) {
+      if (ref.current?.value == undefined || ref.current?.value === "") {
+        console.log("A field was left empty!");
+        return;
+      }
+    }
+    const email = emailRef.current!.value;
+    const inputtedPassword = passwordRef.current!.value;
+
+    fetch(`http://localhost:8080/api/user/${email}`)
       .then((response) => {
         if (response.status == 500) {
-          console.log("invalid user or email");
+          console.log("invalid email");
           return null;
         } else if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -46,10 +50,17 @@ const Login = () => {
         if (!user) {
           return;
         }
-        sessionStorage.setItem("active", JSON.stringify(true));
-        sessionStorage.setItem("user", JSON.stringify(user));
 
-        navigate("/trading");
+        ComparePasswords(inputtedPassword, user.hashedPassword)
+          .then((match) => {
+            if (match) {
+              sessionStorage.setItem("active", JSON.stringify(true));
+              sessionStorage.setItem("user", JSON.stringify(user));
+
+              navigate("/trading");
+            }
+          })
+          .catch((err) => console.error(err));
       })
       .catch((error) => console.log("Error while fetching data: " + error));
   };
@@ -58,13 +69,9 @@ const Login = () => {
       <Navbar />
       <div>
         <p>Email</p>
-        <input type="text" value={email} onChange={handleEmailChange}></input>
+        <input type="text" ref={emailRef}></input>
         <p>Password</p>
-        <input
-          type="password"
-          value={password}
-          onChange={handlePasswordChange}
-        ></input>
+        <input type="password" ref={passwordRef}></input>
         <button onClick={handleSubmit}>Submit</button>
       </div>
     </>

@@ -1,12 +1,25 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar: React.FC = () => {
   const loggedIn = JSON.parse(sessionStorage.getItem("active") || "false");
+  const navigate = useNavigate();
+
+  const Logout = () => {
+    sessionStorage.setItem("active", JSON.stringify(false));
+    sessionStorage.setItem("user", JSON.stringify(null));
+
+    navigate("/");
+  };
 
   const loadNavbarComponents = () => {
     if (loggedIn) {
-      return <Link to="/profile">Profile</Link>;
+      return (
+        <>
+          <Link to="/profile">Profile</Link>
+          <button onClick={Logout}>Logout</button>
+        </>
+      );
     }
     return (
       <>

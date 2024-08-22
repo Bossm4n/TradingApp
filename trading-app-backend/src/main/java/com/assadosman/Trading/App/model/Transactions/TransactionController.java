@@ -19,7 +19,7 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping("/buy")
+    @PostMapping("buy")
     public ResponseEntity<String> addBuyingTransaction(@Valid @RequestBody Transaction transaction) throws JsonProcessingException, TransactionService.AssetDoesntExistException {
         if(transaction.getNumOfAssets()<=0){
             return new ResponseEntity<>("Invalid Number of assets", HttpStatus.BAD_REQUEST);
@@ -35,7 +35,12 @@ public class TransactionController {
         return transactionService.getTransactions();
     }
 
-    @PostMapping("/sell")
+    @GetMapping(path = "{userID}")
+    public List<Transaction> getUsersTransactions(@PathVariable("userID") Integer userID){
+        return transactionService.findAllByUserID(userID);
+    }
+
+    @PostMapping("sell")
     public ResponseEntity<String> addSellingTransaction(@Valid @RequestBody Transaction transaction) throws JsonProcessingException, TransactionService.AssetDoesntExistException {
         transactionService.sellAsset(transaction);
 
