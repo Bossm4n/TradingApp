@@ -22,7 +22,7 @@ const Signup = () => {
 
   useEffect(() => {
     if (loggedIn) {
-      // Redirect to "/invalid-page" if the user is not logged in
+      // Redirect to "/invalid-page" if the user is logged in
       navigate("/invalid-page");
     }
   }, [loggedIn, navigate]);
