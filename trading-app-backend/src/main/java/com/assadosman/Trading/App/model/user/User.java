@@ -1,5 +1,6 @@
 package com.assadosman.Trading.App.model.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class User {
     @NotNull(message = "You password cannot be null!")
     private String hashedPassword;
 
+    @JsonProperty
     @NotNull(message = "Your Date of Birth cannot be null!")
     private LocalDate DOB;
 

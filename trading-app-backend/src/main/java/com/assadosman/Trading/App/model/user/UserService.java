@@ -94,4 +94,22 @@ public class UserService {
         }
         return result;
     }
+
+//    public User getUserByEmailAndPassword(String email, String password) {
+//        Optional<User> userFoundByEmailAndPassword = userRepository.findUserByEmailAndHashedPassword(email, password);
+//        if(userFoundByEmailAndPassword.isEmpty()){
+//            throw new IllegalStateException("Invalid email or password");
+//        }
+//
+//        return userFoundByEmailAndPassword.get();
+//    }
+
+    public User getUserByEmail(String email) {
+        Optional<User> userFoundByEmail = userRepository.findUserByEmail(email);
+        if(userFoundByEmail.isEmpty()){
+            throw new IllegalStateException("Invalid email");
+        }
+
+        return userFoundByEmail.get();
+    }
 }

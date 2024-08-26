@@ -21,13 +21,20 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping()
     public List<User> getUsers(){
         return userService.getUsers();
     }
 
-    @PostMapping
+    @GetMapping(path = "{email}")
+    public User getUserByEmailAndPassword(@PathVariable("email") String email){
+        return userService.getUserByEmail(email);
+    }
+
+    @PostMapping(path = "signup")
     public ResponseEntity<String> addUser(@Valid @RequestBody User user){
+        System.out.println(user);
+
         userService.addNewUser(user);
 
         return new ResponseEntity<>("User is valid", HttpStatus.OK);
