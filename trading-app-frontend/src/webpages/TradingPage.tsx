@@ -16,6 +16,18 @@ interface StockData {
   volume: number;
 }
 
+interface User {
+  userID: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  hashedPassword: string;
+  DOB: string;
+  balance: number;
+  name: string;
+  dob: string;
+}
+
 const generateRandomStockData = (symbol: string, basePrice: number = 100, volatility: number = 2, days: number = 100): StockData[] => {
   const stockData: StockData[] = [];
   let currentPrice: number = basePrice;
@@ -64,6 +76,10 @@ const styles: { [key: string]: React.CSSProperties } = {
       cursor: "pointer", 
       transition: "background-color 0.3s, transform 0.3s"
     },
+    selectedListItem: {
+      backgroundColor: "blue",
+      color: "white"
+    },
     chartContainer: {
       marginTop: "20px",
       width: "100%",
@@ -73,7 +89,9 @@ const styles: { [key: string]: React.CSSProperties } = {
   };
 
 const TradingPage: React.FC = () => {
+  const [numShares, setNumShares] = useState(0)
   const [chartData, setChartData] = useState<any>(null);
+  const [selectedCompany, setSelectedCompany] = useState<string>("SPX"); // Track the selected company
   const chartRef = useRef<any>(null);
 
   const marketFunds: { [key: string]: string } = {
@@ -92,6 +110,8 @@ const TradingPage: React.FC = () => {
   };
 
   const fetchFromApi = (companyName: string) => {
+    setSelectedCompany(companyName); // Update selected company when a company is clicked
+
     fetch(`http://13.60.231.205:8080/api/assets/${companyName}`)
       .then(response => response.json())
       .then(data => {
@@ -124,10 +144,10 @@ const TradingPage: React.FC = () => {
       })
       .catch(() => {
         setChartData({
-          labels: generateRandomStockData("Sample").map(item => item.date),
+          labels: generateRandomStockData(companyName).map(item => item.date),
           datasets: [{
-            label: "Sample",
-            data: generateRandomStockData("Sample").map(item => ({
+            label: companyName,
+            data: generateRandomStockData(companyName).map(item => ({
               x: item.date,
               y: item.close
             })),
@@ -163,11 +183,45 @@ const TradingPage: React.FC = () => {
     }
   }, []);
 
+  console.log(sessionStorage.getItem("active"))
+
+  
+  async function  purchase(): Promise<void>{
+    const json = sessionStorage.getItem("user")
+    let user : User;
+    let id : number
+    if(json !== null){
+      const latestPrice = chartData.datasets[0].data[chartData.datasets[0].data.length - 1].y;
+      user = JSON.parse(json)
+      id = user.userID
+      const data = {
+        userID:id,
+        assetName: selectedCompany,
+        assetPrice: latestPrice,
+        numOfAssets: numShares,
+        LocalDate: new Date().toLocaleDateString()
+      }
+      const response =  await fetch(`http://localhost/buy`, {
+        method:'POST',
+        body: JSON.stringify(data)
+      })
+      console.log('Purchase successful');
+    }
+  }
+
+  const handleNumShares = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setNumShares(parseInt(event.target.value));
+    };
+
   return (
     <div>
       <Navbar />
       <div>TradingPage</div>
       <SearchBar fetchFromApi={fetchFromApi} />
+      {sessionStorage.getItem("active") && <>
+        <h1>Buy Shares</h1>
+        <input id="quant" type='number' value={numShares} min="0" onChange={handleNumShares}/>
+      </>}
       <div>
         <h1>Market Summary</h1>
         <div style={styles.scrollableContainer}>
@@ -175,10 +229,21 @@ const TradingPage: React.FC = () => {
             {Object.entries(marketFunds).map(([name, symbol], index) => (
               <li
                 key={index}
-                style={styles.listItem}
+                style={{
+                  ...styles.listItem,
+                  ...(selectedCompany === symbol ? styles.selectedListItem : {})
+                }}
                 onClick={() => fetchFromApi(symbol)}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#f0f0f0")}
+                onMouseEnter={(e) => {
+                  if (selectedCompany !== symbol) {
+                    e.currentTarget.style.backgroundColor = "#e0e0e0";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedCompany !== symbol) {
+                    e.currentTarget.style.backgroundColor = "#f0f0f0";
+                  }
+                }}
               >
                 {name}
               </li>
