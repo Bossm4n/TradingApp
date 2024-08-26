@@ -221,6 +221,7 @@ const TradingPage: React.FC = () => {
       {sessionStorage.getItem("active") && <>
         <h1>Buy Shares</h1>
         <input id="quant" type='number' value={numShares} min="0" onChange={handleNumShares}/>
+        <button onClick={purchase}>Purchase</button>
       </>}
       <div>
         <h1>Market Summary</h1>
