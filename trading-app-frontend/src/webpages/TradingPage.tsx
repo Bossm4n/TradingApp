@@ -110,67 +110,75 @@ const TradingPage: React.FC = () => {
   };
 
   const fetchFromApi = (companyName: string) => {
-    setSelectedCompany(companyName); // Update selected company when a company is clicked
-
+    setSelectedCompany(companyName);
+  
     fetch(`http://13.60.231.205:8080/api/assets/${companyName}`)
       .then(response => response.json())
       .then(data => {
-        setChartData({
-          labels: data.map((item: StockData) => item.date),
-          datasets: [{
-            label: companyName,
-            data: data.map((item: StockData) => ({
-              x: item.date,
-              y: item.close
-            })),
-            borderColor: (context: any) => {
-              const chart = context.chart;
-              const { dataIndex } = context;
-              
-              if (dataIndex === 0) return 'gray'; // Default color for the first data point
-
-              const currentValue = chart.data.datasets[0].data[dataIndex];
-              const previousValue = chart.data.datasets[0].data[dataIndex - 1];
-              
-              if (!currentValue || !previousValue) return 'gray'; // Default color if current or previous value is missing
-
-              return currentValue.y > previousValue.y ? 'green' : 'red';
-            },
-            backgroundColor: 'transparent',
-            pointRadius: 0, // Remove the circles at the peaks
-            borderWidth: 2,
-          }]
-        });
+        if (data.prices && data.prices!=="[]") {
+          data.prices= JSON.parse(data.prices);
+          setChartData({
+            labels: data.prices.map((item: StockData) => item.date),
+            datasets: [{
+              label: companyName,
+              data: data.prices.map((item: StockData) => ({
+                x: item.date,
+                y: item.close
+              })),
+              borderColor: (context: any) => {
+                const chart = context.chart;
+                const { dataIndex } = context;
+  
+                if (dataIndex === 0) return 'gray'; // Default color for the first data point
+  
+                const currentValue = chart.data.datasets[0].data[dataIndex];
+                const previousValue = chart.data.datasets[0].data[dataIndex - 1];
+  
+                if (!currentValue || !previousValue) return 'gray'; // Default color if current or previous value is missing
+  
+                return currentValue.y > previousValue.y ? 'green' : 'red';
+              },
+              backgroundColor: 'transparent',
+              pointRadius: 0, // Remove the circles at the peaks
+              borderWidth: 2,
+            }]
+          });
+        } else {
+          // Handle case where no data is returned from the API
+          setChartData({
+            labels: generateRandomStockData(companyName).map(item => item.date),
+            datasets: [{
+              label: companyName,
+              data: generateRandomStockData(companyName).map(item => ({
+                x: item.date,
+                y: item.close
+              })),
+              borderColor: (context: any) => {
+                const chart = context.chart;
+                const { dataIndex } = context;
+  
+                if (dataIndex === 0) return 'gray'; // Default color for the first data point
+  
+                const currentValue = chart.data.datasets[0].data[dataIndex];
+                const previousValue = chart.data.datasets[0].data[dataIndex - 1];
+  
+                if (!currentValue || !previousValue) return 'gray'; // Default color if current or previous value is missing
+  
+                return currentValue.y > previousValue.y ? 'green' : 'red';
+              },
+              backgroundColor: 'transparent',
+              pointRadius: 0, // Remove the circles at the peaks
+              borderWidth: 2,
+            }]
+          });
+        }
       })
-      .catch(() => {
-        setChartData({
-          labels: generateRandomStockData(companyName).map(item => item.date),
-          datasets: [{
-            label: companyName,
-            data: generateRandomStockData(companyName).map(item => ({
-              x: item.date,
-              y: item.close
-            })),
-            borderColor: (context: any) => {
-              const chart = context.chart;
-              const { dataIndex } = context;
-              
-              if (dataIndex === 0) return 'gray'; // Default color for the first data point
-
-              const currentValue = chart.data.datasets[0].data[dataIndex];
-              const previousValue = chart.data.datasets[0].data[dataIndex - 1];
-              
-              if (!currentValue || !previousValue) return 'gray'; // Default color if current or previous value is missing
-
-              return currentValue.y > previousValue.y ? 'green' : 'red';
-            },
-            backgroundColor: 'transparent',
-            pointRadius: 0, // Remove the circles at the peaks
-            borderWidth: 2,
-          }]
-        });
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        // Handle error appropriately
       });
   }
+  
 
   useEffect(() => {
     fetchFromApi('SPX');
@@ -183,31 +191,42 @@ const TradingPage: React.FC = () => {
     }
   }, []);
 
-  console.log(sessionStorage.getItem("active"))
+  console.log(sessionStorage.getItem("user"))
 
-  
-  async function  purchase(): Promise<void>{
-    const json = sessionStorage.getItem("user")
-    let user : User;
-    let id : number
-    if(json !== null){
-      const latestPrice = chartData.datasets[0].data[chartData.datasets[0].data.length - 1].y;
-      user = JSON.parse(json)
-      id = user.userID
-      const data = {
-        userID:id,
-        assetName: selectedCompany,
-        assetPrice: latestPrice,
-        numOfAssets: numShares,
-        LocalDate: new Date().toLocaleDateString()
-      }
-      const response =  await fetch(`http://localhost/buy`, {
-        method:'POST',
-        body: JSON.stringify(data)
-      })
-      console.log('Purchase successful');
+  async function purchase(): Promise<void> {
+    const json = sessionStorage.getItem("user");
+    let user: User;
+    let id: number;
+    if (json !== null) {
+        console.log(chartData);
+        const latestPrice = chartData.datasets[0].data[chartData.datasets[0].data.length - 1].y;
+        user = JSON.parse(json);
+        id = user.userID;
+        console.log(id)
+
+        // Format the date as 'YYYY-MM-DD'
+        const formattedDate = new Date().toISOString().split('T')[0];
+
+        const data = {
+            userID: id,
+            assetName: selectedCompany,
+            assetPrice: latestPrice,
+            numOfAssets: numShares,
+            dateCreated: formattedDate // Use 'dateCreated' to match your backend field
+        };
+
+        const response = await fetch(`http://13.60.231.205:8080/api/transaction/buy`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        console.log('Purchase successful', response);
     }
-  }
+}
+
 
   const handleNumShares = (event: React.ChangeEvent<HTMLInputElement>) => {
       setNumShares(parseInt(event.target.value));

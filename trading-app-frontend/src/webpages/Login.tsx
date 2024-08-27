@@ -47,6 +47,7 @@ const Login = () => {
         return response.json();
       })
       .then((user: User) => {
+        console.log(user)
         if (!user) {
           return;
         }
