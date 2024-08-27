@@ -24,7 +24,13 @@ public class AssetController {
 
     @GetMapping(path="/api/assets/{name}")
     public ResponseEntity<AssetEntity> respondGetRequest(@PathVariable("name") String name){
-        List<Double> prices = fetchDataFromApi(name);
+        List<Double> prices;
+        try{
+            prices = fetchDataFromApi(name);
+        }catch(Exception e){
+            prices = new ArrayList<>();
+        }
+        System.out.println(name);
         Optional<AssetEntity> optionalAsset = assetRepo.findById(name);
         if (optionalAsset.isPresent()){
             assetRepo.save(AssetEntity.builder()

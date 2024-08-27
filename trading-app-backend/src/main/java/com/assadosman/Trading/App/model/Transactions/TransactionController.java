@@ -26,6 +26,8 @@ public class TransactionController {
         }
 
         transactionService.buyingTransaction(transaction);
+        System.out.println(transaction.getAssetName());
+        System.out.println(transaction.getNumOfAssets());
 
         return new ResponseEntity<>("Successfully bought your asset('s)", HttpStatus.OK);
     }
