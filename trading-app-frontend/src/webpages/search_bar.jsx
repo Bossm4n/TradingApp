@@ -27,24 +27,20 @@ const SearchBar = ({ fetchFromApi }) => {
 
   // Handle the search result click
   const handleResultClick = (symbol) => {
-    // Update the input field with the selected symbol
     setQuery(symbol);
-
-    // Clear the filtered symbols list
     setFilteredSymbols([]);
-
-    // Call the API with the selected symbol
     fetchFromApi(symbol);
   };
 
   return (
     <div>
       <input 
-        id="search"
-        type="text"
-        value={query}
-        onChange={handleInputChange}
-        placeholder="Search stock symbols..."
+          className='searchBar'
+          id="search"
+          type="text"
+          value={query}
+          onChange={handleInputChange}
+          placeholder="Search stock symbols..."
       />
       <ul style={{ maxHeight: '200px', overflowY: 'scroll' }}>
         {filteredSymbols.slice(0, 10).map((symbol, index) => (
