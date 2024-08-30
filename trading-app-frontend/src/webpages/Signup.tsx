@@ -1,10 +1,10 @@
-import { Sign } from "crypto";
+// Signup.tsx
 import Navbar from "../components/Navbar";
 import React, { useEffect, useRef, useState } from "react";
 import User from "../interfaces/User";
-import { error } from "console";
 import { useNavigate } from "react-router-dom";
 import HashingFunction from "../components/HashingFunction";
+import "../css_files/signup.css"; // Importing the CSS file
 
 const Signup = () => {
   const [hashedPassword, setHashedPassword] = useState<string>("");
@@ -22,20 +22,17 @@ const Signup = () => {
 
   useEffect(() => {
     if (loggedIn) {
-      // Redirect to "/invalid-page" if the user is logged in
       navigate("/invalid-page");
     }
   }, [loggedIn, navigate]);
 
-  // Return null or a loading spinner while checking authentication
   if (loggedIn) {
-    return null; // or return a loading spinner
+    return null;
   }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault();
 
-    // Collect values from refs and set them in the state
     for (const ref of references) {
       if (ref.current?.value == undefined || ref.current?.value === "") {
         console.log("A field was left empty!");
@@ -80,35 +77,41 @@ const Signup = () => {
         sessionStorage.setItem("active", JSON.stringify(true));
         sessionStorage.setItem("user", JSON.stringify(newUser));
 
-        navigate("/trading");
+        navigate("/");
       })
       .catch((err) => console.log("Error while posting user Data: " + err));
-    // You can now use `submittedData` for further processing (e.g., sending to a server)
-    console.log(newUser);
   };
 
   return (
     <>
       <Navbar />
-      <form onSubmit={handleSubmit}>
-        <p>First Name</p>
-        <input type="text" ref={firstNameRef} />
+      <form onSubmit={handleSubmit} className="signup-form">
+        <div className="form-field">
+          <label className="field-label" htmlFor="first-name">First Name</label>
+          <input type="text" id="first-name" ref={firstNameRef} className="form-input" />
+        </div>
 
-        <p>Last Name</p>
-        <input type="text" ref={lastNameRef} />
+        <div className="form-field">
+          <label className="field-label" htmlFor="last-name">Last Name</label>
+          <input type="text" id="last-name" ref={lastNameRef} className="form-input" />
+        </div>
 
-        <p>Email</p>
-        <input type="email" ref={emailRef} />
+        <div className="form-field">
+          <label className="field-label" htmlFor="email">Email</label>
+          <input type="email" id="email" ref={emailRef} className="form-input" />
+        </div>
 
-        <p>Date Of Birth</p>
-        <input type="date" ref={dobRef} />
+        <div className="form-field">
+          <label className="field-label" htmlFor="dob">Date Of Birth</label>
+          <input type="date" id="dob" ref={dobRef} className="form-input" />
+        </div>
 
-        <p>Password</p>
-        <input type="password" ref={passwordRef} />
+        <div className="form-field">
+          <label className="field-label" htmlFor="password">Password</label>
+          <input type="password" id="password" ref={passwordRef} className="form-input" />
+        </div>
 
-        <button type="submit" style={{ marginTop: "10px" }}>
-          Sign up
-        </button>
+        <button type="submit" className="signup-button">Sign up</button>
       </form>
     </>
   );

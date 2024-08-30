@@ -200,18 +200,15 @@ const generateRandomStockData = (symbol: string, basePrice: number = 100, volati
       }
     }, []);
 
-    console.log(sessionStorage.getItem("user"))
 
     async function purchase(): Promise<void> {
       const json = sessionStorage.getItem("user");
       let user: User;
       let id: number;
       if (json !== null) {
-          console.log(chartData);
           const latestPrice = chartData.datasets[0].data[chartData.datasets[0].data.length - 1].y;
           user = JSON.parse(json);
           id = user.userID;
-          console.log(id)
 
           // Format the date as 'YYYY-MM-DD'
           const formattedDate = new Date().toISOString().split('T')[0];
@@ -232,7 +229,6 @@ const generateRandomStockData = (symbol: string, basePrice: number = 100, volati
               body: JSON.stringify(data),
           })
           if(response.status===500){
-            console.log("no")
             setErrorMessage("Your current balance is insufficient to complete this transaction.");
             setTimeout(() => {
               setErrorMessage(null);
@@ -249,7 +245,6 @@ const generateRandomStockData = (symbol: string, basePrice: number = 100, volati
       setNumShares(parseInt(event.target.value));
     };
 
-  console.log(sessionStorage.getItem("active")==="false")
 
   return (
     <div className='trading-container'>

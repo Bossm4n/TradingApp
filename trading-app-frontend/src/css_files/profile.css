@@ -1,0 +1,104 @@
+/* Profile.css */
+
+/* Container for the entire profile page */
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .profile-info {
+    margin-bottom: 30px;
+  }
+  
+  .profile-info div {
+    margin: 10px 0;
+    font-size: 1.1em;
+  }
+  
+  .profile-info strong {
+    color: #555;
+  }
+  
+  /* Balance styling */
+  .profile-balance {
+    font-size: 1.2em;
+    color: #2e8b57; /* Dark Sea Green */
+  }
+  
+  /* Transactions section */
+  .profile-transactions {
+    margin-top: 20px;
+  }
+  
+  .profile-transactions h2 {
+    border-bottom: 2px solid #2e8b57;
+    padding-bottom: 5px;
+    color: #2e8b57;
+  }
+  
+  .transactions-list {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 15px;
+  }
+  
+  .transaction-item {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-left: 5px solid #2e8b57;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .transaction-item:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .transaction-quantity {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .transaction-name {
+    color: #2e8b57;
+  }
+  
+  .transaction-price {
+    color: #d9534f; /* Bootstrap's danger color */
+  }
+  
+  .transaction-date {
+    color: #777;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .profile-container {
+      padding: 10px;
+    }
+  
+    .profile-info div {
+      font-size: 1em;
+    }
+  
+    .profile-balance {
+      font-size: 1.1em;
+    }
+  
+    .transaction-item {
+      padding: 10px;
+    }
+  }
+  

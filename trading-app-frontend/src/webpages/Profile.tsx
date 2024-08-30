@@ -3,79 +3,95 @@ import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import User from "../interfaces/User";
 import Transaction from "../interfaces/Transaction";
+import "../css_files/profile.css"; // Import the CSS file
 
 const Profile = () => {
   const [transactions, setTransactions] = useState<Transaction[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<User | null>(null);
+  const [balance, setBalance] = useState(50000); // Starting balance
 
   const navigate = useNavigate();
   const loggedIn = JSON.parse(sessionStorage.getItem("active") || "false");
 
   useEffect(() => {
     if (!loggedIn) {
-      // Redirect to "/invalid-page" if the user is not logged in
       navigate("/invalid-page");
     }
 
     const userData = sessionStorage.getItem("user");
     setUser(userData ? JSON.parse(userData) : null);
 
-    const fetchTransactions = async () => {
-      try {
-        if (user != null && user.userID) {
-          await getTransactions(user.userID);
-        }
-      } catch (err) {
-        console.error("Error getting transactions: " + err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (userData) {
+      fetchTransactions(JSON.parse(userData).userID);
+    }
+  }, [loggedIn, navigate]);
 
-    fetchTransactions();
-  }, [loggedIn, navigate, loading]);
+  useEffect(() => {
+    if (transactions) {
+      let total = 50000;
+      transactions.forEach((transaction) => {
+        total -= transaction.assetPrice * transaction.numOfAssets;
+      });
+      setBalance(total);
+    }
+  }, [transactions]);
 
-  if (!loggedIn || user == null) {
-    return null;
-  }
-
-  const getTransactions = async (userID: Number) => {
-    await fetch(`http://localhost:8080/api/transaction/${userID}`)
-      .then((response) => response.json())
-      .then((transactionsJSON: Transaction[]) => {
+  const fetchTransactions = async (userID: number) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/transaction/${userID}`);
+      if (response.ok) {
+        const transactionsJSON: Transaction[] = await response.json();
         setTransactions(transactionsJSON);
-      })
-      .catch((error) => console.log("Error while fetching data: " + error));
+      } else {
+        console.error("Failed to fetch transactions");
+      }
+    } catch (error) {
+      console.error("Error while fetching transactions: " + error);
+    }
   };
 
   const getTransactionsElements = (transactions: Transaction[] | null) => {
     if (transactions) {
-      const allTransactionsComponents = transactions.map((transaction) => (
-        <li key={transaction.transactionID}>
-          {transaction.numOfAssets} stock
-          {transaction.numOfAssets > 1 ? "s" : ""} of {transaction.assetName}{" "}
-          bought for ${transaction.assetPrice.toFixed(2)} on{" "}
-          {transaction.dateCreated}.
-        </li>
-      ));
-
-      return <ul>{allTransactionsComponents}</ul>;
+      return (
+        <ul className="transactions-list">
+          {transactions.map((transaction) => (
+            <li key={transaction.transactionID} className="transaction-item">
+              <span className="transaction-quantity">
+                {transaction.numOfAssets} stock{transaction.numOfAssets > 1 ? "s" : ""}
+              </span>{" "}
+              of <span className="transaction-name">{transaction.assetName}</span> bought for $
+              <span className="transaction-price">{transaction.assetPrice.toFixed(2)}</span> on{" "}
+              <span className="transaction-date">{transaction.dateCreated}</span>.
+            </li>
+          ))}
+        </ul>
+      );
     }
-
-    return <></>;
+    return null;
   };
 
+  if (!loggedIn || !user) {
+    return null;
+  }
+
   return (
-    <div>
+    <div className="profile-container">
       <Navbar />
-      Profile
-      <div>
-        Name: {user.firstName} {user.lastName}
+      <div className="profile-info">
+        <div className="profile-name">
+          <strong>Name:</strong> {user.firstName} {user.lastName}
+        </div>
+        <div className="profile-email">
+          <strong>Email:</strong> {user.email}
+        </div>
+        <div className="profile-balance">
+          <strong>Current Balance:</strong> ${balance.toFixed(2)}
+        </div>
       </div>
-      <div>Email: {user.email}</div>
-      <div>Current Balance: {user.balance.toString()}</div>
-      <div>{getTransactionsElements(transactions)}</div>
+      <div className="profile-transactions">
+        <h2>Transactions</h2>
+        {getTransactionsElements(transactions)}
+      </div>
     </div>
   );
 };
