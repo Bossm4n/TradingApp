@@ -133,6 +133,8 @@ const Profile = () => {
           })}
         </ul>
       );
+    } else {
+      return <p>Loading...</p>;
     }
   };
 
