@@ -91,6 +91,7 @@ const Profile = () => {
         console.log(allTransactionsSummed);
 
         setSummedTransactions(allTransactionsSummed);
+        transactionsJSON.reverse()
         setTransactions(transactionsJSON);
 
         console.log(summedTransactions);
