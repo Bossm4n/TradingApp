@@ -16,35 +16,40 @@ const Profile = () => {
   useEffect(() => {
     if (!loggedIn) {
       navigate("/invalid-page");
-    }
+    } else {
+      const userData = sessionStorage.getItem("user");
+      setUser(userData ? JSON.parse(userData) : null);
 
-    const userData = sessionStorage.getItem("user");
-    setUser(userData ? JSON.parse(userData) : null);
-
-    if (userData) {
-      fetchTransactions(JSON.parse(userData).userID);
+      if (userData) {
+        fetchTransactions(JSON.parse(userData).userID);
+      }
     }
   }, [loggedIn, navigate]);
 
   useEffect(() => {
     if (transactions) {
+      console.time("Processing Transactions");
       let total = 50000;
       transactions.forEach((transaction) => {
         total -= transaction.assetPrice * transaction.numOfAssets;
       });
       setBalance(total);
+      console.timeEnd("Processing Transactions");
     }
   }, [transactions]);
 
   const fetchTransactions = async (userID: number) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/transaction/${userID}`);
+      console.time("Fetching Transactions");
+      const response = await fetch(`http://13.60.231.205:8080/api/transaction/${userID}`); 
+      // const response = await fetch(`http://localhost:8080/api/transaction/${userID}`); 
       if (response.ok) {
         const transactionsJSON: Transaction[] = await response.json();
         setTransactions(transactionsJSON);
       } else {
         console.error("Failed to fetch transactions");
       }
+      console.timeEnd("Fetching Transactions");
     } catch (error) {
       console.error("Error while fetching transactions: " + error);
     }
@@ -66,8 +71,9 @@ const Profile = () => {
           ))}
         </ul>
       );
+    } else {
+      return (<p>Loading...</p>);
     }
-    return null;
   };
 
   if (!loggedIn || !user) {
