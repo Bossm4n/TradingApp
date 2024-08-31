@@ -35,7 +35,7 @@ const Login = () => {
     const email = emailRef.current!.value;
     const inputtedPassword = passwordRef.current!.value;
 
-    fetch(`http://localhost:8080/api/user/${email}`)
+    fetch(`http://13.60.231.205:8080/api/user/${email}`)
       .then((response) => {
         if (response.status == 500) {
           console.log("invalid email");

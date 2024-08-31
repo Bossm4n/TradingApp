@@ -38,7 +38,7 @@ const Profile = () => {
 
   const fetchTransactions = async (userID: number) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/transaction/${userID}`);
+      const response = await fetch(`http://13.60.231.205:8080/api/transaction/${userID}`);
       if (response.ok) {
         const transactionsJSON: Transaction[] = await response.json();
         setTransactions(transactionsJSON);
@@ -51,6 +51,8 @@ const Profile = () => {
   };
 
   const getTransactionsElements = (transactions: Transaction[] | null) => {
+    console.log(transactions);
+
     if (transactions) {
       return (
         <ul className="transactions-list">
