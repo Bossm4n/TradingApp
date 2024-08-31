@@ -12,11 +12,11 @@ const initializeActiveStatus = () => {
 
   if (!isFirstVisit) {
     // If "firstVisit" is not set, this is the user's first visit
-    sessionStorage.setItem("firstVisit", "true");
+    sessionStorage.setItem("firstVisit", JSON.stringify(true));
     sessionStorage.setItem("active", JSON.stringify(false));
   } else {
     // If "firstVisit" is already set, we don't need to update "active" status
-    sessionStorage.setItem("firstVisit", "false");
+    sessionStorage.setItem("firstVisit", JSON.stringify(false));
   }
 };
 

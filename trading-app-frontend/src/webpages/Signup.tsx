@@ -5,6 +5,7 @@ import User from "../interfaces/User";
 import { useNavigate } from "react-router-dom";
 import HashingFunction from "../components/HashingFunction";
 import "../css_files/signup.css"; // Importing the CSS file
+import { Session } from "inspector";
 
 const Signup = () => {
   const [hashedPassword, setHashedPassword] = useState<string>("");
@@ -30,8 +31,8 @@ const Signup = () => {
     return null;
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent default form submission behavior
 
     for (const ref of references) {
       if (ref.current?.value == undefined || ref.current?.value === "") {
@@ -40,9 +41,10 @@ const Signup = () => {
       }
     }
 
-    HashingFunction(passwordRef.current!.value).then(
-      (hashedPasswordFromPromise) =>
-        setHashedPassword(hashedPasswordFromPromise)
+    await HashingFunction(passwordRef.current!.value).then(
+      (hashedPasswordFromPromise) => {
+        setHashedPassword((prevState) => hashedPasswordFromPromise);
+      }
     );
 
     if (hashedPassword == "") {
@@ -74,6 +76,12 @@ const Signup = () => {
           throw new Error("Network response was not ok");
         }
 
+        return response.json();
+      })
+      .then((signUpResponseJSON: { userId: number; message: string }) => {
+        newUser.userID = signUpResponseJSON.userId;
+        console.log(signUpResponseJSON.message);
+
         sessionStorage.setItem("active", JSON.stringify(true));
         sessionStorage.setItem("user", JSON.stringify(newUser));
 
@@ -87,31 +95,63 @@ const Signup = () => {
       <Navbar />
       <form onSubmit={handleSubmit} className="signup-form">
         <div className="form-field">
-          <label className="field-label" htmlFor="first-name">First Name</label>
-          <input type="text" id="first-name" ref={firstNameRef} className="form-input" />
+          <label className="field-label" htmlFor="first-name">
+            First Name
+          </label>
+          <input
+            type="text"
+            id="first-name"
+            ref={firstNameRef}
+            className="form-input"
+          />
         </div>
 
         <div className="form-field">
-          <label className="field-label" htmlFor="last-name">Last Name</label>
-          <input type="text" id="last-name" ref={lastNameRef} className="form-input" />
+          <label className="field-label" htmlFor="last-name">
+            Last Name
+          </label>
+          <input
+            type="text"
+            id="last-name"
+            ref={lastNameRef}
+            className="form-input"
+          />
         </div>
 
         <div className="form-field">
-          <label className="field-label" htmlFor="email">Email</label>
-          <input type="email" id="email" ref={emailRef} className="form-input" />
+          <label className="field-label" htmlFor="email">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            ref={emailRef}
+            className="form-input"
+          />
         </div>
 
         <div className="form-field">
-          <label className="field-label" htmlFor="dob">Date Of Birth</label>
+          <label className="field-label" htmlFor="dob">
+            Date Of Birth
+          </label>
           <input type="date" id="dob" ref={dobRef} className="form-input" />
         </div>
 
         <div className="form-field">
-          <label className="field-label" htmlFor="password">Password</label>
-          <input type="password" id="password" ref={passwordRef} className="form-input" />
+          <label className="field-label" htmlFor="password">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            ref={passwordRef}
+            className="form-input"
+          />
         </div>
 
-        <button type="submit" className="signup-button">Sign up</button>
+        <button type="submit" className="signup-button">
+          Sign up
+        </button>
       </form>
     </>
   );
