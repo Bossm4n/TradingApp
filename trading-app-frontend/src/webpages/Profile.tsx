@@ -183,7 +183,7 @@ const Profile = () => {
       <Portfolio summedElements={summedTransactions} balance={user.balance} />
 
       <div className="profile-transactions">
-        <h2>Previous Transactions</h2>
+        <h2 className="text-xl">Previous Transactions</h2>
         {getTransactionsElements(transactions)}
       </div>
 

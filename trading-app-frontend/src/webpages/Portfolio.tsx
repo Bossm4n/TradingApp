@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import SummedTransaction from "../interfaces/SummedTransaction";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
@@ -19,10 +19,39 @@ interface HoveredChartElement {
 const Portfolio: FC<PortfolioProps> = (props) => {
   const [newChartElementIndex, setNewChartElementIndex] = useState<number>(-1);
   const [oldChartElementIndex, setOldChartElementIndex] = useState<number>(-1);
+  const [loadingProps, setLoadingProps] = useState<boolean>(true);
+  const [backgroundColors, setBackgroundColors] = useState<string[]>([]);
   const listItemRefs = useRef<Map<number, HTMLLIElement>>(new Map());
+
+  useEffect(() => {
+    if (props.summedElements.length != 0) {
+      setLoadingProps(false);
+
+      if (backgroundColors.length == 0) {
+        const summedElementsAndBalance: any[] = props.summedElements.map(
+          (index) => Math.random()
+        );
+        summedElementsAndBalance.push(Math.random());
+
+        setBackgroundColors(
+          summedElementsAndBalance.map((_, index) => getRandomColor())
+        );
+      }
+    }
+  }, [props.summedElements, loadingProps]);
 
   const getCurrentPrice = (assetName: String) => {
     return 132;
+  };
+
+  const getRandomColor = (): string => {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    console.log(color);
+    return color;
   };
 
   const onHover = (e: any, item: any) => {
@@ -47,7 +76,7 @@ const Portfolio: FC<PortfolioProps> = (props) => {
 
   const higlightPortfolioElement = (key: number, leave: boolean) => {
     const listItem = listItemRefs.current.get(key);
-    const classes = "text-red-300";
+    const classes = "portfolio-li-hover";
     // console.log(listItem);
     if (leave) {
       listItem?.classList.remove(classes);
@@ -78,20 +107,8 @@ const Portfolio: FC<PortfolioProps> = (props) => {
     datasets: [
       {
         data: stockValues,
-        backgroundColor: [
-          "#FF6384",
-          "#36A2EB",
-          "#FFCE56",
-          "#4BC0C0",
-          "#9966FF",
-        ],
-        hoverBackgroundColor: [
-          "#FF6384",
-          "#36A2EB",
-          "#FFCE56",
-          "#4BC0C0",
-          "#9966FF",
-        ],
+        backgroundColor: backgroundColors,
+        hoverBackgroundColor: backgroundColors,
         borderWidth: 1,
       },
     ],
@@ -116,9 +133,13 @@ const Portfolio: FC<PortfolioProps> = (props) => {
     onHover: (e: any, item: any) => onHover(e, item),
   };
 
+  if (loadingProps) {
+    return <div>loading</div>;
+  }
+
   return (
-    <div>
-      Portfolio
+    <div className="portfolio">
+      <h2 className="mb-4 text-xl">Portfolio</h2>
       <div className="flex flex-row">
         <ul>
           {props.summedElements.map((summedTransaction, index) => {
@@ -133,10 +154,25 @@ const Portfolio: FC<PortfolioProps> = (props) => {
                   }
                 }}
               >
-                You have {summedTransaction.numOfAssets} stock
-                {summedTransaction.numOfAssets != 1 ? "s" : ""} of{" "}
-                {summedTransaction.assetName} at the current price of{" "}
-                {getCurrentPrice(summedTransaction.assetName)}.
+                <b>
+                  {summedTransaction.numOfAssets} stock
+                  {summedTransaction.numOfAssets != 1 ? "s" : ""}
+                </b>{" "}
+                of{" "}
+                <span className=" text-purple-900">
+                  {summedTransaction.assetName}
+                </span>{" "}
+                at{" "}
+                <span className="text-stone-600">
+                  ${getCurrentPrice(summedTransaction.assetName)}
+                </span>{" "}
+                a share, for a total value of{" "}
+                <span className=" text-green-900">
+                  $
+                  {getCurrentPrice(summedTransaction.assetName) *
+                    summedTransaction.numOfAssets}
+                </span>
+                .
               </li>
             );
           })}
