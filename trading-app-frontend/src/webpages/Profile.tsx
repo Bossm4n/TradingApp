@@ -91,7 +91,7 @@ const Profile = () => {
         console.log(allTransactionsSummed);
 
         setSummedTransactions(allTransactionsSummed);
-        transactionsJSON.reverse()
+        transactionsJSON.reverse();
         setTransactions(transactionsJSON);
 
         console.log(summedTransactions);
@@ -113,14 +113,14 @@ const Profile = () => {
             return (
               <li key={transaction.transactionID} className="transaction-item">
                 <span className="transaction-quantity">
-                  {transaction.numOfAssets} stock
+                  {Math.abs(transaction.numOfAssets)} stock
                   {transaction.numOfAssets > 1 ? "s" : ""}
                 </span>{" "}
                 of{" "}
                 <span className="transaction-name">
                   {transaction.assetName}
                 </span>{" "}
-                {Number(assetPrice) > 0 ? "bought" : "sold"} for
+                {Number(transaction.numOfAssets) > 0 ? "bought" : "sold"} for
                 <span className="transaction-price">
                   {" "}
                   ${assetPrice}

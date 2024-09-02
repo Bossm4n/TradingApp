@@ -143,6 +143,10 @@ const Portfolio: FC<PortfolioProps> = (props) => {
       <div className="flex flex-row">
         <ul>
           {props.summedElements.map((summedTransaction, index) => {
+            if (summedTransaction.numOfAssets == 0) {
+              return;
+            }
+
             return (
               <li
                 key={index}

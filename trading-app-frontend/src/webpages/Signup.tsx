@@ -61,7 +61,7 @@ const Signup = () => {
       balance: 50000,
     };
 
-    fetch("http://13.60.231.205:8080/api/user/signup", {
+    fetch("http://localhost:8080/api/user/signup", {
       method: "POST",
       body: JSON.stringify(newUser),
       headers: {

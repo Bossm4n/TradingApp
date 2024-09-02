@@ -132,11 +132,13 @@ const styles: { [key: string]: React.CSSProperties } = {
 };
 
 const TradingPage: React.FC = () => {
-  const [numShares, setNumShares] = useState(0);
+  const [buyNumShares, setBuyNumShares] = useState(0);
+  const [sellNumShares, setSellNumShares] = useState(0);
   const [chartData, setChartData] = useState<any>(null);
   const [selectedCompany, setSelectedCompany] = useState<string>("SPX"); // Track the selected company
   const chartRef = useRef<any>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [buyErrorMessage, setBuyErrorMessage] = useState<string | null>(null);
+  const [sellErrorMessage, setSellErrorMessage] = useState<string | null>(null);
 
   const marketFunds: { [key: string]: string } = {
     "S&P 500": "SPX",
@@ -258,7 +260,7 @@ const TradingPage: React.FC = () => {
         userID: id,
         assetName: selectedCompany,
         assetPrice: latestPrice,
-        numOfAssets: numShares,
+        numOfAssets: buyNumShares,
         dateCreated: formattedDate, // Use 'dateCreated' to match your backend field
       };
 
@@ -273,11 +275,11 @@ const TradingPage: React.FC = () => {
         }
       );
       if (response.status === 500) {
-        setErrorMessage(
+        setBuyErrorMessage(
           "Your current balance is insufficient to complete this transaction."
         );
         setTimeout(() => {
-          setErrorMessage(null);
+          setBuyErrorMessage(null);
         }, 5000);
       } else {
         console.log("Purchase successful", response.status);
@@ -286,7 +288,7 @@ const TradingPage: React.FC = () => {
         const userData = sessionStorage.getItem("user");
         const tempUser: User | null = userData ? JSON.parse(userData) : null;
         if (tempUser != null) {
-          tempUser.balance -= latestPrice * numShares;
+          tempUser.balance -= latestPrice * buyNumShares;
         } else {
           console.log(
             "error updating balance while getting userData from sessionStorage"
@@ -295,12 +297,81 @@ const TradingPage: React.FC = () => {
 
         sessionStorage.setItem("user", JSON.stringify(tempUser));
       }
-      setNumShares(0);
+      setBuyNumShares(0);
     }
   }
 
-  const handleNumShares = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNumShares(parseInt(event.target.value));
+  const sell = async () => {
+    const json = sessionStorage.getItem("user");
+    let user: User;
+    let id: number;
+    if (json !== null) {
+      const latestPrice =
+        chartData.datasets[0].data[chartData.datasets[0].data.length - 1].y;
+      user = JSON.parse(json);
+      id = user.userID;
+
+      // Format the date as 'YYYY-MM-DD'
+      const formattedDate = new Date().toISOString().split("T")[0];
+
+      const transaction = {
+        userID: id,
+        assetName: selectedCompany,
+        assetPrice: latestPrice,
+        numOfAssets: -sellNumShares,
+        dateCreated: formattedDate, // Use 'dateCreated' to match your backend field
+      };
+
+      console.log(transaction);
+
+      fetch("http://localhost:8080/api/transaction/sell", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(transaction),
+      })
+        .then((response) => {
+          if (response.status === 500) {
+            setSellErrorMessage(
+              "Your current balance is insufficient to complete this transaction."
+            );
+            setTimeout(() => {
+              setSellErrorMessage(null);
+            }, 5000);
+          } else {
+            console.log("Sale successful", response.status);
+
+            // Updates user data in session storage
+            const userData = sessionStorage.getItem("user");
+            const tempUser: User | null = userData
+              ? JSON.parse(userData)
+              : null;
+            if (tempUser != null) {
+              tempUser.balance += latestPrice * sellNumShares;
+            } else {
+              console.log(
+                "error updating balance while getting userData from sessionStorage"
+              );
+            }
+
+            sessionStorage.setItem("user", JSON.stringify(tempUser));
+          }
+        })
+        .catch((err) => {
+          console.error("Error when posting fetch transaction: ", err);
+        });
+
+      setSellNumShares(0);
+    }
+  };
+
+  const handlebuyNumShares = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBuyNumShares(parseInt(event.target.value));
+  };
+
+  const handleSellNumShares = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSellNumShares(parseInt(event.target.value));
   };
 
   return (
@@ -337,17 +408,35 @@ const TradingPage: React.FC = () => {
         </div>
         <SearchBar fetchFromApi={fetchFromApi} />
         {sessionStorage.getItem("active") === "true" && (
-          <div className="button-container">
-            <h1>Buy Shares</h1>
-            <input
-              id="quant"
-              type="number"
-              value={numShares}
-              min="0"
-              onChange={handleNumShares}
-            />
-            <button onClick={purchase}>Purchase</button>
-            {errorMessage && <p style={styles.errorMessage}>{errorMessage}</p>}
+          <div className="flex flex-row">
+            <div className="button-container">
+              <h1>Buy Shares</h1>
+              <input
+                id="quant"
+                type="number"
+                value={buyNumShares}
+                min="0"
+                onChange={handlebuyNumShares}
+              />
+              <button onClick={purchase}>Purchase</button>
+              {buyErrorMessage && (
+                <p style={styles.errorMessage}>{buyErrorMessage}</p>
+              )}
+            </div>
+            <div className="button-container">
+              <h1>Sell Shares</h1>
+              <input
+                id="quant"
+                type="number"
+                value={sellNumShares}
+                min="0"
+                onChange={handleSellNumShares}
+              />
+              <button onClick={sell}>Sell</button>
+              {sellErrorMessage && (
+                <p style={styles.errorMessage}>{sellErrorMessage}</p>
+              )}
+            </div>
           </div>
         )}
 
