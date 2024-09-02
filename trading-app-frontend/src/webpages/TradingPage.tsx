@@ -324,7 +324,7 @@ const TradingPage: React.FC = () => {
 
       console.log(transaction);
 
-      fetch("http://localhost:8080/api/transaction/sell", {
+      fetch("http://13.60.231.205:8080/api/transaction/sell", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
