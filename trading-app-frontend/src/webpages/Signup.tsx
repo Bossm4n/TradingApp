@@ -5,6 +5,7 @@ import User from "../interfaces/User";
 import { error } from "console";
 import { useNavigate } from "react-router-dom";
 import HashingFunction from "../components/HashingFunction";
+import { Session } from "inspector";
 
 const Signup = () => {
   const [hashedPassword, setHashedPassword] = useState<string>("");
@@ -32,7 +33,7 @@ const Signup = () => {
     return null; // or return a loading spinner
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission behavior
 
     // Collect values from refs and set them in the state
@@ -43,9 +44,10 @@ const Signup = () => {
       }
     }
 
-    HashingFunction(passwordRef.current!.value).then(
-      (hashedPasswordFromPromise) =>
-        setHashedPassword(hashedPasswordFromPromise)
+    await HashingFunction(passwordRef.current!.value).then(
+      (hashedPasswordFromPromise) =>{
+        setHashedPassword(prevState => hashedPasswordFromPromise);
+      }
     );
 
     if (hashedPassword == "") {
@@ -62,7 +64,7 @@ const Signup = () => {
       balance: 50000,
     };
 
-    fetch("http://localhost:8080/api/user/signup", {
+    await fetch("http://localhost:8080/api/user/signup", {
       method: "POST",
       body: JSON.stringify(newUser),
       headers: {
@@ -77,8 +79,14 @@ const Signup = () => {
           throw new Error("Network response was not ok");
         }
 
-        sessionStorage.setItem("active", JSON.stringify(true));
-        sessionStorage.setItem("user", JSON.stringify(newUser));
+        return response.json()
+      })
+      .then((signUpResponseJSON:{userId:number,message:string})=>{
+        newUser.userID = signUpResponseJSON.userId;
+        console.log(signUpResponseJSON.message);
+
+        sessionStorage.setItem("active",JSON.stringify(true));
+        sessionStorage.setItem("user",JSON.stringify(newUser));
 
         navigate("/trading");
       })
