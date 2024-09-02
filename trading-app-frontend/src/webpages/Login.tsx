@@ -1,9 +1,10 @@
+// Login.tsx
 import { useNavigate } from "react-router-dom";
 import User from "../interfaces/User";
 import Navbar from "../components/Navbar";
 import React, { useEffect, useRef, useState } from "react";
-import HashingFunction from "../components/HashingFunction";
 import ComparePasswords from "../components/ComparePasswords";
+import "../css_files/login.css"; // Importing the CSS file
 
 const Login = () => {
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -16,14 +17,12 @@ const Login = () => {
 
   useEffect(() => {
     if (loggedIn) {
-      // Redirect to "/invalid-page" if the user is not logged in
       navigate("/invalid-page");
     }
   }, [loggedIn, navigate]);
 
-  // Return null or a loading spinner while checking authentication
   if (loggedIn) {
-    return null; // or return a loading spinner
+    return null;
   }
 
   const handleSubmit = () => {
@@ -36,7 +35,7 @@ const Login = () => {
     const email = emailRef.current!.value;
     const inputtedPassword = passwordRef.current!.value;
 
-    fetch(`http://localhost:8080/api/user/${email}`)
+    fetch(`http://13.60.231.205:8080/api/user/${email}`)
       .then((response) => {
         if (response.status == 500) {
           console.log("invalid email");
@@ -47,7 +46,6 @@ const Login = () => {
         return response.json();
       })
       .then((user: User) => {
-        console.log(user)
         if (!user) {
           return;
         }
@@ -58,22 +56,28 @@ const Login = () => {
               sessionStorage.setItem("active", JSON.stringify(true));
               sessionStorage.setItem("user", JSON.stringify(user));
 
-              navigate("/trading");
+              navigate("/");
             }
           })
           .catch((err) => console.error(err));
       })
       .catch((error) => console.log("Error while fetching data: " + error));
   };
+
   return (
     <>
       <Navbar />
-      <div>
-        <p>Email</p>
-        <input type="text" ref={emailRef}></input>
-        <p>Password</p>
-        <input type="password" ref={passwordRef}></input>
-        <button onClick={handleSubmit}>Submit</button>
+      <div className="login-container">
+        <h2 className="login-title">Login</h2>
+        <div className="login-field">
+          <label htmlFor="email" className="field-label">Email</label>
+          <input type="text" id="email" ref={emailRef} className="login-input" />
+        </div>
+        <div className="login-field">
+          <label htmlFor="password" className="field-label">Password</label>
+          <input type="password" id="password" ref={passwordRef} className="login-input" />
+        </div>
+        <button onClick={handleSubmit} className="login-button">Submit</button>
       </div>
     </>
   );
