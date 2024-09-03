@@ -1,6 +1,8 @@
 package com.assadosman.Trading.App.model.Transactions;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -8,6 +10,8 @@ import java.time.LocalDate;
 @Entity
 @Data
 @Table
+@Builder
+@AllArgsConstructor
 public class Transaction {
 
     @Id

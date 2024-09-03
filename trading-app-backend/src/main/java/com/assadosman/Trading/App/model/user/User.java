@@ -3,6 +3,7 @@ package com.assadosman.Trading.App.model.user;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 @Entity
 @Data
 @Table(name = "user")
+@Builder
 public class User {
 
     @Id
