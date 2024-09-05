@@ -44,13 +44,15 @@ const Signup = () => {
     await HashingFunction(passwordRef.current!.value).then(
       (hashedPasswordFromPromise) => {
         setHashedPassword((prevState) => hashedPasswordFromPromise);
+        console.log(hashedPasswordFromPromise)
+        if (hashedPassword == "") {
+          console.log("Error in hashing Function");
+          return;
+        }
       }
     );
 
-    if (hashedPassword == "") {
-      console.log("Error in hashing Function");
-      return;
-    }
+    
 
     const newUser: User = {
       firstName: firstNameRef.current!.value,
@@ -61,7 +63,7 @@ const Signup = () => {
       balance: 50000,
     };
 
-    fetch("http://13.60.231.205:8080/api/user/signup", {
+    fetch(`${process.env.REACT_APP_API_URL}api/user/signup`, {
       method: "POST",
       body: JSON.stringify(newUser),
       headers: {
@@ -69,6 +71,7 @@ const Signup = () => {
       },
     })
       .then((response) => {
+        console.log(response)
         if (response.status == 500) {
           console.log("Internal Server Error");
           return null;

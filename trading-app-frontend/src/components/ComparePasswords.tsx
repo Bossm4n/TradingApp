@@ -1,21 +1,9 @@
-import bcrypt from "bcryptjs";
+import hashPassword from "./HashingFunction";
 
-export default async function ComparePasswords(
-  inputtedPassword: string,
-  actualPassword: string
-) {
-  const passwordMatch: boolean = await new Promise((resolve, reject) => {
-    bcrypt.compare(inputtedPassword, actualPassword, function (err, res) {
-      if (err) {
-        console.error("Error while comparing passwords: " + err);
-        return false;
-      }
-      if (!res) {
-        console.log("passwords dont match!");
-      }
-      resolve(res);
-    });
-  });
-
-  return passwordMatch;
+export default async function comparePassword(inputPassword: string, storedHashedPassword:string) {
+  const hashedInputPassword = await hashPassword(inputPassword);
+  console.log(hashedInputPassword, storedHashedPassword)
+  
+  // Compare the hashed input password with the stored hash
+  return hashedInputPassword === storedHashedPassword;
 }

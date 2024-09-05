@@ -158,9 +158,10 @@ const TradingPage: React.FC = () => {
   const fetchFromApi = (companyName: string) => {
     setSelectedCompany(companyName);
 
-    fetch(`http://13.60.231.205:8080/api/assets/${companyName}`)
+    fetch(`${process.env.REACT_APP_API_URL}api/assets/${companyName}`)
       .then((response) => response.json())
       .then((data) => {
+        console.log(data.prices)
         if (data.prices && data.prices !== "[]") {
           data.prices = JSON.parse(data.prices);
           setChartData({
@@ -265,7 +266,7 @@ const TradingPage: React.FC = () => {
       };
 
       const response = await fetch(
-        `http://13.60.231.205:8080/api/transaction/buy`,
+        `${process.env.REACT_APP_API_URL}api/transaction/buy`,
         {
           method: "POST",
           headers: {
@@ -282,7 +283,14 @@ const TradingPage: React.FC = () => {
           setBuyErrorMessage(null);
         }, 5000);
       } else {
+        setBuyErrorMessage(
+          "Your purchase was successful"
+        );
+        setTimeout(() => {
+          setBuyErrorMessage(null);
+        }, 5000);
         console.log("Purchase successful", response.status);
+        
 
         // Updates user data in session storage
         const userData = sessionStorage.getItem("user");
@@ -324,7 +332,7 @@ const TradingPage: React.FC = () => {
 
       console.log(transaction);
 
-      fetch("http://13.60.231.205:8080/api/transaction/sell", {
+      fetch(`${process.env.REACT_APP_API_URL}api/transaction/sell`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -340,6 +348,10 @@ const TradingPage: React.FC = () => {
               setSellErrorMessage(null);
             }, 5000);
           } else {
+            setSellErrorMessage(
+              "The Transaction was successful"
+            );
+            console.log(sellErrorMessage)
             console.log("Sale successful", response.status);
 
             // Updates user data in session storage

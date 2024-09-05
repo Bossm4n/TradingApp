@@ -52,7 +52,7 @@ const Profile = () => {
   // }, [transactions]);
 
   const getTransactions = async (userID: Number) => {
-    await fetch(`http://13.60.231.205:8080/api/transaction/${userID}`)
+    await fetch(`${process.env.REACT_APP_API_URL}api/transaction/${userID}`)
       .then((response) => response.json())
       .then((transactionsJSON: Transaction[]) => {
         const allTransactionsSummedMap: Map<String, number> = new Map();

@@ -35,8 +35,9 @@ const Login = () => {
     const email = emailRef.current!.value;
     const inputtedPassword = passwordRef.current!.value;
 
-    fetch(`http://13.60.231.205:8080/api/user/${email}`)
+    fetch(`${process.env.REACT_APP_API_URL}api/user/${email}`)
       .then((response) => {
+        console.log(response)
         if (response.status == 500) {
           console.log("invalid email");
           return null;
@@ -52,6 +53,7 @@ const Login = () => {
 
         ComparePasswords(inputtedPassword, user.hashedPassword)
           .then((match) => {
+            console.log(inputtedPassword, user.hashedPassword)
             if (match) {
               sessionStorage.setItem("active", JSON.stringify(true));
               sessionStorage.setItem("user", JSON.stringify(user));
