@@ -45,54 +45,6 @@ interface User {
   name: string;
   dob: string;
 }
-const styles: { [key: string]: React.CSSProperties } = {
-  scrollableContainer: {
-    overflowX: "auto",
-    whiteSpace: "nowrap",
-    padding: "10px 0",
-  },
-  horizontalList: {
-    display: "flex",
-    listStyleType: "none",
-    margin: 0,
-    padding: 0,
-  },
-  listItem: {
-    marginRight: "20px",
-    padding: "15px",
-    minWidth: "150px",
-    backgroundColor: "#f0f0f0",
-    borderRadius: "4px",
-    cursor: "pointer",
-    transition: "background-color 0.3s, transform 0.3s",
-  },
-  selectedListItem: {
-    backgroundColor: "blue",
-    color: "white",
-  },
-  chartContainer: {
-    marginTop: "20px",
-    width: "100%",
-    maxWidth: "1200px",
-    margin: "0 auto",
-  },
-  // Define both error and success message styles
-  errorMessage: {
-    color: "red",
-    fontSize: "16px",
-    margin: "10px 0",
-    display: "block",
-    textAlign: "center",
-  },
-  successMessage: {
-    color: "green",
-    fontSize: "16px",
-    margin: "10px 0",
-    display: "block",
-    textAlign: "center",
-  },
-};
-
 
 const generateRandomStockData = (
   symbol: string,
@@ -139,45 +91,45 @@ const generateRandomStockData = (
   return stockData.reverse(); // Return in chronological order
 };
 
-// const styles: { [key: string]: React.CSSProperties } = {
-//   scrollableContainer: {
-//     overflowX: "auto",
-//     whiteSpace: "nowrap",
-//     padding: "10px 0",
-//   },
-//   horizontalList: {
-//     display: "flex",
-//     listStyleType: "none",
-//     margin: 0,
-//     padding: 0,
-//   },
-//   listItem: {
-//     marginRight: "20px",
-//     padding: "15px",
-//     minWidth: "150px",
-//     backgroundColor: "#f0f0f0",
-//     borderRadius: "4px",
-//     cursor: "pointer",
-//     transition: "background-color 0.3s, transform 0.3s",
-//   },
-//   selectedListItem: {
-//     backgroundColor: "blue",
-//     color: "white",
-//   },
-//   chartContainer: {
-//     marginTop: "20px",
-//     width: "100%",
-//     maxWidth: "1200px",
-//     margin: "0 auto",
-//   },
-//   errorMessage: {
-//     color: "red",
-//     fontSize: "16px",
-//     margin: "10px 0",
-//     display: "block",
-//     textAlign: "center",
-//   },
-// };
+const styles: { [key: string]: React.CSSProperties } = {
+  scrollableContainer: {
+    overflowX: "auto",
+    whiteSpace: "nowrap",
+    padding: "10px 0",
+  },
+  horizontalList: {
+    display: "flex",
+    listStyleType: "none",
+    margin: 0,
+    padding: 0,
+  },
+  listItem: {
+    marginRight: "20px",
+    padding: "15px",
+    minWidth: "150px",
+    backgroundColor: "#f0f0f0",
+    borderRadius: "4px",
+    cursor: "pointer",
+    transition: "background-color 0.3s, transform 0.3s",
+  },
+  selectedListItem: {
+    backgroundColor: "blue",
+    color: "white",
+  },
+  chartContainer: {
+    marginTop: "20px",
+    width: "100%",
+    maxWidth: "1200px",
+    margin: "0 auto",
+  },
+  errorMessage: {
+    color: "red",
+    fontSize: "16px",
+    margin: "10px 0",
+    display: "block",
+    textAlign: "center",
+  },
+};
 
 const TradingPage: React.FC = () => {
   const [buyNumShares, setBuyNumShares] = useState(0);
@@ -294,7 +246,6 @@ const TradingPage: React.FC = () => {
 
   async function purchase(): Promise<void> {
     const json = sessionStorage.getItem("user");
-    console.log(json)
     let user: User;
     let id: number;
     if (json !== null) {
@@ -302,7 +253,6 @@ const TradingPage: React.FC = () => {
         chartData.datasets[0].data[chartData.datasets[0].data.length - 1].y;
       user = JSON.parse(json);
       id = user.userID;
-      console.log(user)
 
       // Format the date as 'YYYY-MM-DD'
       const formattedDate = new Date().toISOString().split("T")[0];
@@ -326,8 +276,6 @@ const TradingPage: React.FC = () => {
         }
       );
       if (response.status === 500) {
-        console.log( JSON.stringify(data))
-        console.log(response)
         setBuyErrorMessage(
           "Your current balance is insufficient to complete this transaction."
         );
@@ -394,7 +342,7 @@ const TradingPage: React.FC = () => {
         .then((response) => {
           if (response.status === 500) {
             setSellErrorMessage(
-              "Insufficient Shares."
+              "Your current balance is insufficient to complete this transaction."
             );
             setTimeout(() => {
               setSellErrorMessage(null);
@@ -403,9 +351,6 @@ const TradingPage: React.FC = () => {
             setSellErrorMessage(
               "The Transaction was successful"
             );
-            setTimeout(() => {
-              setSellErrorMessage(null);
-            }, 5000);
             console.log(sellErrorMessage)
             console.log("Sale successful", response.status);
 
@@ -487,18 +432,9 @@ const TradingPage: React.FC = () => {
               />
               <button onClick={purchase}>Purchase</button>
               {buyErrorMessage && (
-                <p
-                  style={
-                    buyErrorMessage.includes("successful")
-                      ? styles.successMessage
-                      : styles.errorMessage
-                  }
-                >
-                  {buyErrorMessage}
-                </p>
+                <p style={styles.errorMessage}>{buyErrorMessage}</p>
               )}
             </div>
-
             <div className="button-container">
               <h1>Sell Shares</h1>
               <input
@@ -510,15 +446,7 @@ const TradingPage: React.FC = () => {
               />
               <button onClick={sell}>Sell</button>
               {sellErrorMessage && (
-                <p
-                  style={
-                    sellErrorMessage.includes("successful")
-                      ? styles.successMessage
-                      : styles.errorMessage
-                  }
-                >
-                  {sellErrorMessage}
-                </p>
+                <p style={styles.errorMessage}>{sellErrorMessage}</p>
               )}
             </div>
           </div>

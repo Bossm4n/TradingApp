@@ -1,0 +1,75 @@
+/* Container to align items to the left */
+.button-container {
+  text-align: left;
+  font-size: 18px; /* Slightly smaller for better readability */
+  margin: 0 auto; /* Center align container if needed */
+  max-width: 400px; /* Limit width for better control */
+}
+
+/* Main trading container */
+.trading-container {
+  width: 100%;
+  padding: 0 2vw; /* Adjust padding for better responsiveness */
+  box-sizing: border-box; /* Ensure padding is included in width calculation */
+}
+
+/* Horizontal bar for navigation or filters */
+.hor-bar {
+  margin: 20px 0; /* Consistent vertical margin */
+}
+
+/* Heading for trading chart */
+.p-trading {
+  font-size: 28px; /* Slightly smaller for better hierarchy */
+  font-weight: bold; /* Enhance readability */
+  color: #3A7CA5; /* Use a color from the palette */
+  margin-bottom: 20px; /* Space below heading */
+}
+
+/* Style for the button */
+.button-container button {
+  background-color: #3A7CA5; /* Main button color */
+  color: white;
+  border: none;
+  padding: 12px 24px; /* Slightly larger padding for better touch targets */
+  border-radius: 6px; /* Slightly larger border radius */
+  font-size: 16px;
+  font-weight: bold; /* Make text stand out */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth color transition and subtle scale effect */
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.button-container button:hover {
+  background-color: #2F6690; /* Darker shade for hover effect */
+  transform: scale(1.02); /* Slight scale effect on hover */
+}
+
+/* Input field styling */
+.button-container input[type='number'] {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 16px; /* Ensure text is readable */
+}
+
+/* Search bar styling */
+.searchBar {
+  height: 50px;
+  border: 1px solid #ccc;
+  border-radius: 6px; /* Consistent border radius */
+  padding: 0 12px; /* Add padding inside search bar */
+  font-size: 16px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  transition: border-color 0.3s ease; /* Smooth border color transition */
+}
+
+.searchBar:focus {
+  border-color: #3A7CA5; /* Highlight border on focus */
+  outline: none; /* Remove default focus outline */
+}

@@ -41,6 +41,15 @@ const Profile = () => {
     fetchTransactions();
   }, [loggedIn, navigate, loading]);
 
+  // useEffect(() => {
+  //   if (transactions) {
+  //     let total = 50000;
+  //     transactions.forEach((transaction) => {
+  //       total -= transaction.assetPrice * transaction.numOfAssets;
+  //     });
+  //     setBalance(total);
+  //   }
+  // }, [transactions]);
 
   const getTransactions = async (userID: Number) => {
     await fetch(`${process.env.REACT_APP_API_URL}api/transaction/${userID}`)

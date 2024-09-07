@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import User from "../interfaces/User";
 import Navbar from "../components/Navbar";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ComparePasswords from "../components/ComparePasswords";
 import "../css_files/login.css"; // Importing the CSS file
 
@@ -27,7 +27,7 @@ const Login = () => {
 
   const handleSubmit = () => {
     for (const ref of references) {
-      if (ref.current?.value === undefined || ref.current?.value === "") {
+      if (ref.current?.value == undefined || ref.current?.value === "") {
         console.log("A field was left empty!");
         return;
       }
@@ -38,7 +38,7 @@ const Login = () => {
     fetch(`${process.env.REACT_APP_API_URL}api/user/${email}`)
       .then((response) => {
         console.log(response)
-        if (response.status === 500) {
+        if (response.status == 500) {
           console.log("invalid email");
           return null;
         } else if (!response.ok) {

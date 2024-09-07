@@ -1,0 +1,97 @@
+/* Login.css */
+
+/* General Styles */
+body {
+    background-color: #f5f7fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #2c3e50;
+    padding: 20px;
+  }
+  
+  .login-title {
+    font-size: 28px;
+    color: #ecf0f1;
+    margin-bottom: 20px;
+  }
+  
+  .login-field {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 15px;
+  }
+  
+  .field-label {
+    display: block;
+    font-weight: 500;
+    color: #ecf0f1;
+    margin-bottom: 5px;
+  }
+  
+  .login-input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .login-input:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(41, 128, 185, 0.8);
+  }
+  
+  .login-button {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px;
+    background-color: #27ae60;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+  }
+  
+  .login-button:hover {
+    background-color: #2ecc71;
+  }
+  
+  .login-button:active {
+    background-color: #1e8449;
+  }
+  
+  .login-button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(41, 128, 185, 0.8);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .login-container {
+      padding: 10px;
+    }
+  
+    .login-title {
+      font-size: 24px;
+    }
+  
+    .login-button {
+      font-size: 14px;
+    }
+  }
+  

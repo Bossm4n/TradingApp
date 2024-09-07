@@ -24,10 +24,10 @@ const Portfolio: FC<PortfolioProps> = (props) => {
   const listItemRefs = useRef<Map<number, HTMLLIElement>>(new Map());
 
   useEffect(() => {
-    if (props.summedElements.length !== 0) {
+    if (props.summedElements.length != 0) {
       setLoadingProps(false);
 
-      if (backgroundColors.length === 0) {
+      if (backgroundColors.length == 0) {
         const summedElementsAndBalance: any[] = props.summedElements.map(
           (index) => Math.random()
         );
@@ -62,7 +62,7 @@ const Portfolio: FC<PortfolioProps> = (props) => {
 
       setNewChartElementIndex(hoveredChartElement.index);
 
-      if (newChartElementIndex === oldChartElementIndex) {
+      if (newChartElementIndex == oldChartElementIndex) {
         return;
       }
 
@@ -143,7 +143,7 @@ const Portfolio: FC<PortfolioProps> = (props) => {
       <div className="flex flex-row">
         <ul>
           {props.summedElements.map((summedTransaction, index) => {
-            if (summedTransaction.numOfAssets === 0) {
+            if (summedTransaction.numOfAssets == 0) {
               return;
             }
 
