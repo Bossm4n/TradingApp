@@ -32,12 +32,12 @@ public class UserController {
     }
 
     @PostMapping(path = "signup")
-    public ResponseEntity<String> addUser(@Valid @RequestBody User user){
+    public ResponseEntity<User> addUser(@Valid @RequestBody User user){
         System.out.println(user);
 
         userService.addNewUser(user);
 
-        return new ResponseEntity<>("User is valid", HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @DeleteMapping(path="{userID}")
