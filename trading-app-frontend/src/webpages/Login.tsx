@@ -60,6 +60,9 @@ const Login = () => {
 
               navigate("/");
             }
+            else{
+              alert("Incorrect password")
+            }
           })
           .catch((err) => console.error(err));
       })

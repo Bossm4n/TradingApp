@@ -10,7 +10,6 @@ const Navbar: React.FC = () => {
   const Logout = () => {
     sessionStorage.setItem("active", JSON.stringify(false));
     sessionStorage.setItem("user", JSON.stringify(null));
-    window.location.reload()
     navigate("/");
   };
 

@@ -401,7 +401,7 @@ const TradingPage: React.FC = () => {
             }, 5000);
           } else {
             setSellErrorMessage(
-              "The Transaction was successful"
+              "Your sale was successful!"
             );
             setTimeout(() => {
               setSellErrorMessage(null);

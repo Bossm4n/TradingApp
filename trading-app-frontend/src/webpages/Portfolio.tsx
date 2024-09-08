@@ -40,8 +40,13 @@ const Portfolio: FC<PortfolioProps> = (props) => {
     }
   }, [props.summedElements, loadingProps]);
 
+  if(props.summedElements.length<1){
+    return <></>
+  }
+
   const getCurrentPrice = (assetName: String) => {
-    return 132;
+    // We need to implement a live price getter however due to restricted api calls we are using a fixed value for now. Will be updated in the future.
+    return 100 * Math.random();
   };
 
   const getRandomColor = (): string => {
@@ -50,12 +55,10 @@ const Portfolio: FC<PortfolioProps> = (props) => {
     for (let i = 0; i < 6; i++) {
       color += letters[Math.floor(Math.random() * 16)];
     }
-    console.log(color);
     return color;
   };
 
   const onHover = (e: any, item: any) => {
-    console.log("hover");
     setOldChartElementIndex(newChartElementIndex);
     if (Array.isArray(item) && item.length > 0) {
       const hoveredChartElement: HoveredChartElement = item[0];
@@ -146,6 +149,7 @@ const Portfolio: FC<PortfolioProps> = (props) => {
             if (summedTransaction.numOfAssets === 0) {
               return;
             }
+            const currPrice = getCurrentPrice(summedTransaction.assetName)
 
             return (
               <li
@@ -168,13 +172,12 @@ const Portfolio: FC<PortfolioProps> = (props) => {
                 </span>{" "}
                 at{" "}
                 <span className="text-stone-600">
-                  ${getCurrentPrice(summedTransaction.assetName)}
+                  ${currPrice.toFixed(2)}
                 </span>{" "}
                 a share, for a total value of{" "}
                 <span className=" text-green-900">
                   $
-                  {getCurrentPrice(summedTransaction.assetName) *
-                    summedTransaction.numOfAssets}
+                  {(currPrice * summedTransaction.numOfAssets).toFixed(2)}
                 </span>
                 .
               </li>
