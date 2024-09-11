@@ -12,6 +12,7 @@ import java.util.List;
 @RestController
 @Validated
 @RequestMapping(path="api/user")
+@CrossOrigin(origins = "http://16.171.124.214:3000")
 public class UserController {
 
     private final UserService userService;

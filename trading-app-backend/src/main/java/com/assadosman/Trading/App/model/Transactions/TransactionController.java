@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://16.171.124.214:3000")
 @RequestMapping(path="api/transaction")
 public class TransactionController {
     private final TransactionService transactionService;

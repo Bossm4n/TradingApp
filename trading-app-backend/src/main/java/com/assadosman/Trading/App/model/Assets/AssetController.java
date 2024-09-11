@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "http://16.171.124.214:3000")
 public class AssetController {
 
     private AssetRepo assetRepo;
